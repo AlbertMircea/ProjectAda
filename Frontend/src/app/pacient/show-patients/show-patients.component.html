@@ -1,0 +1,36 @@
+<div class="patient-list">
+  @for (patient of patients; track patient.userId) {
+  <div class="patient-card">
+    <h2>{{ patient.firstName }} {{ patient.lastName }}</h2>
+    <p><strong>Email:</strong> {{ patient.email }}</p>
+    <p><strong>Gender:</strong> {{ patient.gender }}</p>
+    <p><strong>Job Title:</strong> {{ patient.jobTitle }}</p>
+    <p><strong>Department:</strong> {{ patient.department }}</p>
+    <p><strong>Salary:</strong> ${{ patient.salary }}</p>
+    <p><strong>Avg. Salary:</strong> ${{ patient.avgSalary }}</p>
+    <p>
+      <strong>Status:</strong>
+      <span [style.color]="patient.active ? 'lightgreen' : 'salmon'">
+        {{ patient.active ? "Active" : "Inactive" }}
+      </span>
+    </p>
+
+    <div class="patient-actions">
+      <button (click)="startEditPatient(patient)">✏️ Edit</button>
+      <button (click)="startAddMedication(patient)">💊 Add Medication</button>
+    </div>
+
+    <!-- Edit Form -->
+    @if (editingPatient?.userId === patient.userId) {
+        <app-edit-pacient [patient]="editingPatient"
+        (close)="onCloseEditTask()"></app-edit-pacient>
+    }
+
+    <!-- Medication Form -->
+    @if (addingMedicationFor?.userId === patient.userId) {
+        <app-edit-medication [newMedication]="newMedication"
+        (close)="onCloseMedication()"></app-edit-medication>
+    }
+  </div>
+  }
+</div>

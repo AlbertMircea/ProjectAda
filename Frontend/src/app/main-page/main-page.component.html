@@ -1,0 +1,38 @@
+<app-header text=Welcome{{this.username}}! backButtonVisible="dont show" ></app-header>
+<main>
+<div class="main-container">
+
+
+  @if (role === 'Nurse') {
+    <div class="button-group">
+      <button>Display all patients</button>
+      <button>Display real-time state of the robots</button>
+      <button>Display request for a patient</button>
+    </div>
+  }
+
+  @if (role === 'Doctor') {
+    <div class="button-group">
+      <button (click)="goToPatients()">Display my patients</button>
+      <!-- <button>Add patient</button>
+      <button>Modify patient</button>
+      <button>Delete patient</button> -->
+      <button>Add medicine prescription</button>
+      <button>Display all finished transports</button>
+    </div>
+  }
+
+  @if (role === 'Pharmacist') {
+    <div class="button-group">
+      <button>Display all patients</button>
+      <button>Display all transports</button>
+      <button>Verify the request for a patient</button>
+      <button>Send the requested drug</button>
+      <button>Decline the requested drug</button>
+    </div>
+  }
+</div>
+
+
+  </main>
+  

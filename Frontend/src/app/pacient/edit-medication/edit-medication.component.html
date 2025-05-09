@@ -1,0 +1,27 @@
+<div class="backdrop" (click)="onCancel()"></div>
+<dialog open>
+  <div class="form-group">
+    <h2>Add Medication</h2>
+  </div>
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label
+        >Medication Name:
+        <input [(ngModel)]="newMedication.name" name="medicationName" />
+        <label
+          >Dosage: <input [(ngModel)]="newMedication.dosage" name="dosage" />
+          <label
+            >Frequency:<input
+              [(ngModel)]="newMedication.frequency"
+              name="frequency"
+            />
+            <div class="actions">
+              <button type="button" (click)="onCancel()">Cancel</button>
+              <button type="submit">Create</button>
+            </div>
+          </label>
+        </label>
+      </label>
+    </div>
+  </form>
+</dialog>

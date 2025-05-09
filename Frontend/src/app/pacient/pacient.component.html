@@ -1,0 +1,30 @@
+<app-header backButtonVisible="show"></app-header>
+<!-- <button (click)="goBack()" class="back-button">← Back to Main</button> -->
+
+<main>
+  <h1>My Patients</h1>
+  <div class="patient-controls">
+    <button class="add-patient-btn" (click)="onAddPatient()">➕ Add New Patient</button>
+  
+    <div class="search-bar">
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Search by name" />
+      <button (click)="onSearch()">Search</button>
+    </div>
+  </div>
+  @if (isFetching() || this.patientService.isFetching()) {
+  <p class="fallback-text">Fetching patients...</p>
+  } @else { @if (isEditing) {
+
+  <app-edit-pacient
+    [patient]="newPatient"
+    (close)="onCloseEditTask()"
+  ></app-edit-pacient>
+  }
+
+  <app-show-patients
+    [patients]="patients()"
+    [newMedication]="newMedication"
+  ></app-show-patients>
+
+  }
+</main>
