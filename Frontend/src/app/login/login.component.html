@@ -1,15 +1,14 @@
-<app-header backButtonVisible="dont show"></app-header>
+<app-header [backButtonVisible]="false"></app-header>
 <main>
   <div class="login-container">
     <h2>Login</h2>
     @if (isFetching() && !error()) {
-      <p class="fallback-text">Fetching user...</p>
+    <p class="fallback-text">Fetching user...</p>
+    } @if (error()!='') {
+    <p class="fallback-text">{{ error() }}</p>
+    } @else if (success()) {
+    <p class="fallback-text">Login Successfully</p>
     }
-
-    @if (error()!='') {
-      <p class="fallback-text">{{ error() }}</p>
-    }
-    @else if (success()) {<p class="fallback-text">Login Successfully </p>}
     <form (ngSubmit)="login(email, password)">
       <label>
         Email:
@@ -18,15 +17,19 @@
 
       <label>
         Password:
-        <input type="password" [(ngModel)]="password" name="password" required />
+        <input
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+        />
       </label>
 
       <button type="submit">Login</button>
-      <p class="register-link">
-        No account?
-        <a routerLink="/register">Register</a>
-      </p>
-      
+<p class="register-link">
+  No account?
+  <span class="text-link" (click)="goToRegister()">Register</span>
+</p>
     </form>
   </div>
 </main>

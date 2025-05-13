@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 0.2rem 2rem;
   background: linear-gradient(to bottom, #2c0a4c, #450d80);
   border-radius: 0 0 1rem 1rem;
   color: white;
@@ -28,13 +28,14 @@
 }
 
 .header-center {
-  position: absolute;
+
   left: 50%;
   transform: translateX(-50%);
 }
 
 .header-center img {
-  height: 90px;
+  height: 100px;
+  transform: translateX(20%);
 }
 
 .back-button {

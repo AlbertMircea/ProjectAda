@@ -2164,11 +2164,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\Facultate\\DotNetAPICourse\\DotnetAPI\\DotnetAPI.csproj",
+      "projectUniqueName": "F:\\Facultate\\An 2 Master\\ADA\\ADA_Project\\Backend\\DotnetAPI.csproj",
       "projectName": "DotnetAPI",
-      "projectPath": "F:\\Facultate\\DotNetAPICourse\\DotnetAPI\\DotnetAPI.csproj",
+      "projectPath": "F:\\Facultate\\An 2 Master\\ADA\\ADA_Project\\Backend\\DotnetAPI.csproj",
       "packagesPath": "C:\\Users\\alber\\.nuget\\packages\\",
-      "outputPath": "F:\\Facultate\\DotNetAPICourse\\DotnetAPI\\obj\\",
+      "outputPath": "F:\\Facultate\\An 2 Master\\ADA\\ADA_Project\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

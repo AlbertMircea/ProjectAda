@@ -7,10 +7,10 @@ import { Patient } from './pacient.model';
   providedIn: 'root'
 })
 export class PatientService {
-  private apiUrl = 'https://aleznauerdtc1.azurewebsites.net/UserComplete/GetUsers/0/false'; 
+  isFetching = signal(false);
+ private apiUrl = 'https://aleznauerdtc1.azurewebsites.net/PatientComplete/GetPatients/0/true'; 
 
   constructor(private http: HttpClient) {}
-  isFetching = signal(false);
 
   getPatients(): Observable<Patient[]> {
     this.isFetching.set(true);

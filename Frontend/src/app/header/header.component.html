@@ -1,17 +1,18 @@
 <header class="app-header">
     <div class="header-left">
-      @if (backButtonVisible == 'show') {
+      @if (backButtonVisible == true) {
         <button (click)="goBack()" class="back-button">← Back to Main</button>
       }
     </div>
   
     <div class="header-center">
-      <img src="assets/task-management-logo.png" alt="A todo list" />
+      <img src="assets/image.png" alt="A todo list" />
+      <h3>{{ text }}</h3>
     </div>
   
     <div class="header-right">
-      <h1>EasyTask</h1>
-      <p>{{ text }}</p>
+      <h1>Prescription Delivery Bot</h1>
+
     </div>
   </header>
   

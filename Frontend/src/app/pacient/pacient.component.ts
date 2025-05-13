@@ -19,6 +19,7 @@ export class PacientComponent {
   initialPatients = signal<Patient[]>([]);
   showAddPatientForm = false;
   isFirstTime = 0;
+  username = '';
 
   isEditing = false;
   isFetching = signal(false);
@@ -34,7 +35,7 @@ export class PacientComponent {
   }
   onSearch() {
     console.log(this.searchTerm + "x")
-    if(this.searchTerm != '')
+    if (this.searchTerm.trim() !== '')
     {
       const term = this.searchTerm.toLowerCase();
       this.patients.set(this.patients().filter(patient =>
@@ -43,7 +44,7 @@ export class PacientComponent {
     }
     else{
       console.log(this.initialPatients());
-      this.patients = this.initialPatients;
+      this.patients.set(this.initialPatients());
     }
   }
   
@@ -63,6 +64,9 @@ export class PacientComponent {
 
 
   ngOnInit(): void {
+    this.username = localStorage.getItem('username') ?? 'User';
+    const index = this.username.indexOf("@");
+    this.username = " " + this.username.slice(0, index)
     this.isFetching.set(true);
     this.patientService.isFetching.set(true);
     this.patientService.getPatients().subscribe((data) => {
@@ -72,7 +76,7 @@ export class PacientComponent {
         {
           this.initialPatients.set(data);
           this.isFirstTime = 1;
-          console.log(this.isFirstTime);
+          console.log(data);
         }
         });
         
@@ -82,7 +86,7 @@ export class PacientComponent {
     this.isFetching.set(false);
   }
   goBack() {
-    this.router.navigate(['/main']); // or ['/main'] depending on your route
+    this.router.navigate(['/main']);
   }
 
 }

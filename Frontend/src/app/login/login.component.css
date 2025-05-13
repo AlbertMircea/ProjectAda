@@ -55,16 +55,17 @@ button:active {
 
 .register-link {
   margin-top: 1rem;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #ccc;
+  text-align: center;
 }
 
-.register-link a {
-  color: #9f7aea; /* light purple */
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.register-link a:hover {
+.text-link {
+  color: #9c73ca;
   text-decoration: underline;
+  cursor: pointer;
+}
+
+.text-link:hover {
+  color: #b191e0;
 }

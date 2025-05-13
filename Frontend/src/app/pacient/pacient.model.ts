@@ -5,14 +5,16 @@ export interface Patient {
     email: string;
     gender: string;
     active: boolean;
-    jobTitle: string;
-    department: string;
-    salary: number;
-    avgSalary: number;
+    doctorID: number;
+    ward: string;
+    room: string;
+
   }
   
   export interface NewMedication  {
-    name: '',
+    userId: 0,
+    medicationId: 0,
+    medication: '',
     dosage: '',
-    frequency: ''
+    quantity: 0
   };

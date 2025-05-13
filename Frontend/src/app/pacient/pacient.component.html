@@ -1,4 +1,4 @@
-<app-header backButtonVisible="show"></app-header>
+<app-header text=Welcome{{this.username}}! [backButtonVisible]=true></app-header>
 <!-- <button (click)="goBack()" class="back-button">← Back to Main</button> -->
 
 <main>
@@ -7,7 +7,7 @@
     <button class="add-patient-btn" (click)="onAddPatient()">➕ Add New Patient</button>
   
     <div class="search-bar">
-      <input type="text" [(ngModel)]="searchTerm" placeholder="Search by name" />
+      <input type="text"   (keydown.enter)="onSearch()" [(ngModel)]="searchTerm" placeholder="Search by name" />
       <button (click)="onSearch()">Search</button>
     </div>
   </div>

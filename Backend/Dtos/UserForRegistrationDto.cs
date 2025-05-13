@@ -13,11 +13,9 @@ namespace DotnetAPI.Dtos
         public string LastName { get; set; }
 
         public string Gender { get; set; }
-        public string JobTitle{get;set;}
-        
-        public string Department{get;set;}
 
-        public decimal Salary{get;set;}
+        public string RoleWorker { get; set; }
+
 
 
         public UserForRegistrationDto()
@@ -36,6 +34,7 @@ namespace DotnetAPI.Dtos
             {
                 PasswordConfirm = "";
             }
+            
             if(FirstName == null)
             {
                 FirstName = "";
@@ -50,12 +49,12 @@ namespace DotnetAPI.Dtos
             {
                 Gender ="";
             }
+                        
+            if(RoleWorker == null)
+            {
+                RoleWorker ="";
+            }
             
-            if(JobTitle == null)
-                JobTitle = "";
-            
-            if(Department == null)
-                Department = "";
         }
 
     }

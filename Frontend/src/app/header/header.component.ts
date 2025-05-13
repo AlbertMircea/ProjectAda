@@ -9,10 +9,10 @@ import { Router } from '@angular/router';
 export class HeaderComponent
 {
     @Input() text = '';
-    @Input() backButtonVisible = 'dont show';
+    @Input() backButtonVisible = false;
     constructor(private router: Router) {}
 
     goBack() {
-        this.router.navigate(['/main']); // or ['/main'] depending on your route
+        this.router.navigate(['/main']);
       }
 }

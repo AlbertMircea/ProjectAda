@@ -41,40 +41,18 @@ public class AuthController : ControllerBase{
 
             if(existingUsers.Count() == 0)
             {
-                UserForLoginDto userForSetPassword = new UserForLoginDto(){
-                    Email = userForRegistration.Email,
-                    Password = userForRegistration.Password,
-                };
-                if(_authHelper.SetPassword(userForSetPassword))
-                {
-                    string sqltoAdd = @" EXEC TutorialAppSchema.spUser_Upsert
-                            @FirstName = '" + userForRegistration.FirstName + 
-                            "', @LastName = '" + userForRegistration.LastName +
-                            "', @Email = '" + userForRegistration.Email + 
-                            "', @Gender = '" + userForRegistration.Gender + 
-                            "', @Active = 1" +
-                            ", @JobTitle = '" + userForRegistration.JobTitle + 
-                            "', @Department = '" + userForRegistration.Department + 
-                            "', @Salary = '" + userForRegistration.Salary + "'";
-
-                    if(_dapper.ExecuteSql(sqltoAdd))
-                    {
-                        return Ok();
-                    }
-                    throw new Exception("Failed to Add user!");
-                }
-                
-                throw new Exception("Failed to register user!");
-
+                if(_authHelper.SetPassword(userForRegistration))
+                    return Ok();
+                throw new Exception("Failed to Add Patient!");
             }
-                throw new Exception("User already exists!");
+            throw new Exception("Patient already exists!");
             
         }
         throw new Exception("Password do not match!");
     }
 
     [HttpPut("ResetPassword")]
-    public IActionResult ResetPassword(UserForLoginDto userForSetPassword)
+    public IActionResult ResetPassword(UserForRegistrationDto userForSetPassword)
     {
         if(_authHelper.SetPassword(userForSetPassword))
         {
@@ -83,6 +61,15 @@ public class AuthController : ControllerBase{
         
         throw new Exception("Failed to update password!");
     }
+    
+    [AllowAnonymous]
+    [HttpGet("GetAuthenticatedUsers")]
+    public  IEnumerable<User> GetAuthenticatedUsers()
+    {
+        string sql = "SELECT * FROM TutorialAppSchema.Auth";
+        return _dapper.LoadData<User>(sql);
+    }
+
 
     [AllowAnonymous]
     [HttpPost("Login")]
@@ -110,7 +97,7 @@ public class AuthController : ControllerBase{
             }
         }
 
-        string userIdSql = "SELECT [UserId] FROM TutorialAppSchema.Users where Email='" + userForLogin.Email + "'";
+        string userIdSql = "SELECT [UserId] FROM TutorialAppSchema.Auth where Email='" + userForLogin.Email + "'";
 
         int userId = _dapper.LoadDataSingle<int>(userIdSql);
 
@@ -123,7 +110,7 @@ public class AuthController : ControllerBase{
     public IActionResult RefreshToken()
     {
         string userIdString = User.FindFirst("userId")?.Value + "";
-        string userIdSql = "SELECT [UserId] FROM TutorialAppSchema.Users where UserId='" + userIdString + "'";
+        string userIdSql = "SELECT [UserId] FROM TutorialAppSchema.Auth where UserId='" + userIdString + "'";
 
         int userId = _dapper.LoadDataSingle<int>(userIdSql);
 

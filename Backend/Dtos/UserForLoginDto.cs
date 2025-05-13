@@ -7,6 +7,7 @@ namespace DotnetAPI.Dtos
         public string Email {get;set;}
         public string Password {get;set;}
 
+
         public UserForLoginDto()
         {
             if(Email == null)
@@ -18,6 +19,8 @@ namespace DotnetAPI.Dtos
             {
                 Password = "";
             }
+
+
             
 
         }

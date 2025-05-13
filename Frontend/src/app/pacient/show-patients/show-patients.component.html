@@ -4,10 +4,9 @@
     <h2>{{ patient.firstName }} {{ patient.lastName }}</h2>
     <p><strong>Email:</strong> {{ patient.email }}</p>
     <p><strong>Gender:</strong> {{ patient.gender }}</p>
-    <p><strong>Job Title:</strong> {{ patient.jobTitle }}</p>
-    <p><strong>Department:</strong> {{ patient.department }}</p>
-    <p><strong>Salary:</strong> ${{ patient.salary }}</p>
-    <p><strong>Avg. Salary:</strong> ${{ patient.avgSalary }}</p>
+    <p><strong>Doctor ID:</strong> {{ patient.doctorID }}</p>
+    <p><strong>Ward:</strong> {{ patient.ward }}</p>
+    <p><strong>Room:</strong> ${{ patient.room }}</p>
     <p>
       <strong>Status:</strong>
       <span [style.color]="patient.active ? 'lightgreen' : 'salmon'">

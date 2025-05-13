@@ -29,12 +29,12 @@ main {
 
 .add-patient-btn {
   padding: 0.5rem 1rem;
-  background-color: #9c73ca;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
+  background-color: #6f42c1;
 }
 
 .add-patient-btn:hover {

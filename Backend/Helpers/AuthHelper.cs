@@ -73,7 +73,7 @@ public class AuthHelper
 
         }
 
-        public bool SetPassword(UserForLoginDto userForSetPassword)
+        public bool SetPassword(UserForRegistrationDto userForSetPassword)
         {
             byte[] passwordSalt = new byte[128/8];
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
@@ -87,13 +87,22 @@ public class AuthHelper
             string sqlAddAuth = @"EXEC TutorialAppSchema.spRegistration_Upsert 
                                     @Email = @EmailParam,
                                     @PasswordHash = @PasswordHashParam,
-                                    @PasswordSalt = @PasswordSaltParam";
+                                    @PasswordSalt = @PasswordSaltParam,
+                                    @RoleWorker = @RoleWorkerParam,
+                                    @FirstName = @FirstNameParam,
+                                    @LastName = @LastNameParam,
+                                    @Gender = @GenderParam";
                 
             DynamicParameters sqlParameters = new DynamicParameters();
 
             sqlParameters.Add("@EmailParam", userForSetPassword.Email, DbType.String);
             sqlParameters.Add("@PasswordHashParam", passwordHash, DbType.Binary);
             sqlParameters.Add("@PasswordSaltParam", passwordSalt, DbType.Binary);
+            sqlParameters.Add("@RoleWorkerParam", userForSetPassword.RoleWorker, DbType.String);
+            sqlParameters.Add("@FirstNameParam", userForSetPassword.FirstName, DbType.String);
+            sqlParameters.Add("@LastNameParam", userForSetPassword.LastName, DbType.String);
+            sqlParameters.Add("@GenderParam", userForSetPassword.Gender, DbType.String);
+            
             
             return _dapper.ExecuteSqlWithParameters(sqlAddAuth, sqlParameters);
         }

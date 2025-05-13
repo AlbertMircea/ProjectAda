@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HeaderComponent } from '../header/header.component'; // adjust path if needed
+import { HeaderComponent } from '../header/header.component';
 import { Router } from '@angular/router';
 
 @Component({
