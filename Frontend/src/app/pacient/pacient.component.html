@@ -11,20 +11,21 @@
       <button (click)="onSearch()">Search</button>
     </div>
   </div>
-  @if (isFetching() || this.patientService.isFetching()) {
-  <p class="fallback-text">Fetching patients...</p>
-  } @else { @if (isEditing) {
+
+  @if (isEditing) {
 
   <app-edit-pacient
     [patient]="newPatient"
-    (close)="onCloseEditTask()"
+    (cancel)="onCloseEditTask()"
+    (submit)="onSubmitTask()"
   ></app-edit-pacient>
   }
 
   <app-show-patients
     [patients]="patients()"
     [newMedication]="newMedication"
+    (editSuccessfully)="refreshPatients(true)"
   ></app-show-patients>
 
-  }
+  
 </main>
