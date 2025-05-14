@@ -1,8 +1,9 @@
-import { Component, Input, signal } from '@angular/core';
-import { NewMedication, Patient } from '../pacient.model';
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Prescription, Patient } from '../pacient.model';
 import { FormsModule } from '@angular/forms';
 import { EditPacientComponent } from '../edit-pacient/edit-pacient.component';
 import { EditMedicationComponent } from '../edit-medication/edit-medication.component';
+import { PatientService } from '../pacient.service';
 
 @Component({
   selector: 'app-show-patients',
@@ -13,7 +14,8 @@ import { EditMedicationComponent } from '../edit-medication/edit-medication.comp
 })
 export class ShowPatientsComponent {
   @Input() patients!: Patient[];
-  @Input() newMedication!: NewMedication;
+  @Input() newMedication!: Prescription;
+  @Output() editSuccessfully = new EventEmitter<void>();
 
   editingPatient: any = null;
   addingMedicationFor: any = null;
@@ -21,6 +23,11 @@ export class ShowPatientsComponent {
   startEditPatient(patient: any) {
     this.editingPatient = { ...patient };
     this.addingMedicationFor = null;
+  }
+  onSubmitTask()
+  {
+    this.editingPatient = null;
+    this.editSuccessfully.emit();
   }
 
   onCloseEditTask() {
@@ -34,16 +41,12 @@ export class ShowPatientsComponent {
     this.editingPatient = null;
   }
 
-  updatePatient() {
-    // Call API with updated data here
-    this.editingPatient = null;
-  }
 
   startAddMedication(patient: any) {
     this.addingMedicationFor = patient;
     this.editingPatient = null;
     this.newMedication = {
-      userId: 0,
+      userId: this.addingMedicationFor.userId,
       medicationId: 0,
       medication: '',
       dosage: '',

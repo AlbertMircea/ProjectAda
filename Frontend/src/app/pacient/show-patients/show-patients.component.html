@@ -6,7 +6,7 @@
     <p><strong>Gender:</strong> {{ patient.gender }}</p>
     <p><strong>Doctor ID:</strong> {{ patient.doctorID }}</p>
     <p><strong>Ward:</strong> {{ patient.ward }}</p>
-    <p><strong>Room:</strong> ${{ patient.room }}</p>
+    <p><strong>Room:</strong> {{ patient.room }}</p>
     <p>
       <strong>Status:</strong>
       <span [style.color]="patient.active ? 'lightgreen' : 'salmon'">
@@ -22,7 +22,7 @@
     <!-- Edit Form -->
     @if (editingPatient?.userId === patient.userId) {
         <app-edit-pacient [patient]="editingPatient"
-        (close)="onCloseEditTask()"></app-edit-pacient>
+        (cancel)="onCloseEditTask()" (submit)="onSubmitTask()"></app-edit-pacient>
     }
 
     <!-- Medication Form -->

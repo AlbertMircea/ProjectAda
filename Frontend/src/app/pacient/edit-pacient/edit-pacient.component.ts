@@ -1,6 +1,7 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Patient } from '../pacient.model';
+import { PatientService } from '../pacient.service';
 
 @Component({
   selector: 'app-edit-pacient',
@@ -11,19 +12,36 @@ import { Patient } from '../pacient.model';
 })
 export class EditPacientComponent {
   @Input() patient!: Patient;
-  @Output() close =new EventEmitter<void>();
+  @Output() cancel =new EventEmitter<void>();
+  @Output() submit =new EventEmitter<void>();
   enteredTitle = '';
   enteredSummary = '';
   enteredDueDate = '';
-  private tasksService = 'inject(TaskService);'
+
+  constructor(
+    protected patientService: PatientService,
+  ) {}
+
+  ngOnInit(): void 
+  {
+    this.patient.gender = this.patientService.capitalizeFirstLetter(this.patient.gender);
+  }
 
   onCancel(){
-    this.close.emit();
+    this.cancel.emit();
   }
 
   onSubmit(){
+    this.patientService.upsertPatient(this.patient).subscribe({
+      next: () => {
+        console.log('Patient upserted successfully');
 
-    this.close.emit();
+      },
+      error: (error) => {
+        console.error('Failed to upsert patient', error);
+      },
+    });
+    this.submit.emit();
   }
 }
 

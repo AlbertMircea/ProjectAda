@@ -1,25 +1,33 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { NewMedication, Patient } from '../pacient.model';
+import { Prescription, Patient } from '../pacient.model';
 import { FormsModule } from '@angular/forms';
+import { PatientService } from '../pacient.service';
 
 @Component({
   selector: 'app-edit-medication',
   standalone: true,
   imports: [FormsModule],
   templateUrl: './edit-medication.component.html',
-  styleUrl: './edit-medication.component.css'
+  styleUrl: './edit-medication.component.css',
 })
 export class EditMedicationComponent {
-  @Input() newMedication!: NewMedication;
-  @Output() close =new EventEmitter<void>();
+  @Input() newMedication!: Prescription;
+  @Output() close = new EventEmitter<void>();
+  constructor(protected patientService: PatientService) {}
 
-
-  onCancel(){
+  onCancel() {
     this.close.emit();
-    console.log("CLOSED!");
   }
 
-  onSubmit(){
+  onSubmit() {
+    this.patientService.upsertMedication(this.newMedication).subscribe(
+      () => {
+        console.log('Medication upserted successfully');
+      },
+      (error) => {
+        console.error('Failed to upsert medication', error);
+      }
+    );
 
     this.close.emit();
   }

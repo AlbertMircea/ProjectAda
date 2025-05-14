@@ -87,3 +87,13 @@
       padding: 2rem;
     }
   }
+
+  select {
+  width: 100%;
+  font: inherit;
+  padding: 0.25rem;
+  border-radius: 4px;
+  border: 1px solid #ab9ac0;
+  background-color: #d0c2e1;
+  color: #2e2a33;
+}
