@@ -9,7 +9,7 @@
     } @else if (success()) {
     <p class="fallback-text">Register Successfully</p>
     }
-  <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+  <form (ngSubmit)="onSubmitRegister()" #registerForm="ngForm">
     <label for="email">Email</label>
     <input type="email" id="email" required [(ngModel)]="email" name="email" />
 

@@ -1,7 +1,12 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CustomTokenPayload, Patient, Prescription, User } from './pacient.model';
+import {
+  CustomTokenPayload,
+  Patient,
+  Prescription,
+  User,
+} from './pacient.model';
 import jwt_decode, { jwtDecode } from 'jwt-decode';
 
 @Injectable({
@@ -14,11 +19,14 @@ export class PatientService {
   private apiUrlUpsertPatient =
     'https://aleznauerdtc1.azurewebsites.net/PatientComplete/UpsertPatient';
 
-  private apiUrlGetUsers = 
+  private apiUrlGetUsers =
     'https://aleznauerdtc1.azurewebsites.net/Auth/GetAuthenticatedUsers';
-    
-  private apiUrlUpsertMedication = 
+
+  private apiUrlUpsertMedication =
     'https://aleznauerdtc1.azurewebsites.net/Prescription/UpsertMedication';
+
+  private apiUrlDeletePatient =
+    'https://aleznauerdtc1.azurewebsites.net/PatientComplete/PatientDelete/';
 
   constructor(private http: HttpClient) {}
 
@@ -39,18 +47,26 @@ export class PatientService {
     });
     return this.http.put<void>(this.apiUrlUpsertPatient, patient, { headers });
   }
-  
-  upsertMedication(medication: Prescription): Observable<void> 
-  {
-    console.log(medication.userId);
-    console.log(medication.medication);
+
+  upsertMedication(medication: Prescription): Observable<void> {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
-    return this.http.put<void>(this.apiUrlUpsertMedication, medication, { headers });
+    return this.http.put<void>(this.apiUrlUpsertMedication, medication, {
+      headers,
+    });
   }
-  
+
+  deletePatient(userId: number): Observable<void> {
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    return this.http.delete<void>(`${this.apiUrlDeletePatient}/${userId}`, {
+      headers,
+    });
+  }
 
   capitalizeFirstLetter(value: string): string {
     if (!value) return '';
@@ -77,24 +93,25 @@ export class PatientService {
     return 0;
   }
 
- getRoleWorkerOfLoggedInUser() {
+  getRoleWorkerOfLoggedInUser() {
     const userId = this.getUserIdFromToken();
-    console.log(userId);
     if (!userId) {
       console.error('No userId found in token');
       return;
     }
 
-    this.http.get<User[]>(this.apiUrlGetUsers).subscribe(users => {
-      const foundUser = users.find(u => u.userId === userId);
-      if (foundUser) {
-        console.log('RoleWorker:', foundUser.roleWorker);
-        localStorage.setItem('role', foundUser.roleWorker);
-      } else {
-        console.warn('User not found');
+    this.http.get<User[]>(this.apiUrlGetUsers).subscribe(
+      (users) => {
+        const foundUser = users.find((u) => u.userId === userId);
+        if (foundUser) {
+          localStorage.setItem('role', foundUser.roleWorker);
+        } else {
+          console.warn('User not found');
+        }
+      },
+      (err) => {
+        console.error('Failed to fetch users', err);
       }
-    }, err => {
-      console.error('Failed to fetch users', err);
-    });
+    );
   }
 }

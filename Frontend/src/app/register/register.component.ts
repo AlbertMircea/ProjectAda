@@ -39,7 +39,7 @@ export class RegisterComponent {
   }
 
 
-  onSubmit() {
+  onSubmitRegister() {
     const patientData = {
       email: this.email,
       password: this.password,

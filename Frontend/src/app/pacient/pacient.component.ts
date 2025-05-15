@@ -52,10 +52,10 @@ export class PacientComponent {
     this.refreshPatients(true);
   }
 
-  onSubmitTask() {
+  onSubmitAddingPatient() {
     this.patientService.upsertPatient(this.newPatient).subscribe({
       next: () => {
-        console.log('Patient upserted successfully');
+        console.log('Patient added successfully');
       },
       error: (error) => {
         console.error('Failed to upsert patient', error);
@@ -63,6 +63,7 @@ export class PacientComponent {
     });
     this.isEditing = false;
     this.refreshPatients(true);
+
   }
 
   onSearch() {
@@ -84,26 +85,19 @@ export class PacientComponent {
     this.isEditing = true;
   }
 
-  createPatient() {
-    // POST this.newPatient
-    this.showAddPatientForm = false;
-  }
-
   refreshPatients(init: boolean) {
     this.patientService.getPatients().subscribe((data) => {
-      this.patientService.getPatients().subscribe((data) => {
-        this.patients.set(data);
-        if (init === true) {
-          this.initialPatients.set(data);
-          this.isFirstTime = 1;
-        }
-      });
+      this.patients.set(data);
+      if (init === true) {
+        this.initialPatients.set(data);
+        this.isFirstTime = 1;
+      }
     });
+    
   }
 
   ngOnInit(): void {
     this.username = localStorage.getItem('username') ?? 'User';
-    const index = this.username.indexOf('@');
 
     if (this.username.includes('@')) {
       const index = this.username.indexOf('@');

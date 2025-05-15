@@ -11,13 +11,14 @@
       <button (click)="onSearch()">Search</button>
     </div>
   </div>
+</main>
 
   @if (isEditing) {
-
   <app-edit-pacient
     [patient]="newPatient"
     (cancel)="onCloseEditTask()"
-    (submit)="onSubmitTask()"
+    (submit)="onSubmitAddingPatient()"
+    editPurposeText="Add Patient"
   ></app-edit-pacient>
   }
 
@@ -25,7 +26,7 @@
     [patients]="patients()"
     [newMedication]="newMedication"
     (editSuccessfully)="refreshPatients(true)"
+    (deleteSuccessfully)="refreshPatients(true)"
   ></app-show-patients>
 
   
-</main>
