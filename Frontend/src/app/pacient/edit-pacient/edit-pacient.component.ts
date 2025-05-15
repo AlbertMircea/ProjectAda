@@ -12,6 +12,7 @@ import { PatientService } from '../pacient.service';
 })
 export class EditPacientComponent {
   @Input() patient!: Patient;
+  @Input() editPurposeText = '';
   @Output() cancel =new EventEmitter<void>();
   @Output() submit =new EventEmitter<void>();
   enteredTitle = '';
@@ -31,17 +32,9 @@ export class EditPacientComponent {
     this.cancel.emit();
   }
 
-  onSubmit(){
-    this.patientService.upsertPatient(this.patient).subscribe({
-      next: () => {
-        console.log('Patient upserted successfully');
-
-      },
-      error: (error) => {
-        console.error('Failed to upsert patient', error);
-      },
-    });
+  onSubmitEditPatient(){
     this.submit.emit();
+
   }
 }
 

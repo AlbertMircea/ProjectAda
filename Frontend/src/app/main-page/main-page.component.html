@@ -5,7 +5,7 @@
 
   @if (role === 'Nurse') {
     <div class="button-group">
-      <button>Display all patients</button>
+      <button (click)="goToPatients()">Display all patients</button>
       <button>Display real-time state of the robots</button>
       <button>Display request for a patient</button>
     </div>
@@ -20,7 +20,7 @@
 
   @if (role === 'Pharmacist') {
     <div class="button-group">
-      <button>Display all patients</button>
+      <button (click)="goToPatients()">Display all patients</button>
       <button>Display all transports</button>
       <button>Verify the request for a patient</button>
       <button>Send the requested drug</button>

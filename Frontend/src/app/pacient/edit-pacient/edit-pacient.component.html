@@ -1,9 +1,9 @@
 <div class="backdrop" (click)="onCancel()"></div>
 <dialog open>
   <div class="form-group">
-    <h2>Edit Patient</h2>
+    <h2>{{editPurposeText}}</h2>
   </div>
-  <form (ngSubmit)="onSubmit()">
+  <form (ngSubmit)="onSubmitEditPatient()">
     <div class="form-group">
       <label
         >First Name:
@@ -22,13 +22,13 @@
       /></label>
     </div>
     <div class="form-group">
-      <label for="gender">Gender</label>
-      <select id="gender" [(ngModel)]="patient.gender" name="gender" required>
+      <label for="gender">Gender      <select id="gender" [(ngModel)]="patient.gender" name="gender" required>
         <option value="" disabled>Select Gender</option>
         <option value="Male">Male</option>
         <option value="Female">Female</option>
         <option value="Other">Other</option>
-      </select>
+      </select></label>
+
     </div>
     <div class="form-group">
       <label

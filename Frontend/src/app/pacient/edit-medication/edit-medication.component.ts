@@ -19,7 +19,7 @@ export class EditMedicationComponent {
     this.close.emit();
   }
 
-  onSubmit() {
+  onSubmitMedication() {
     this.patientService.upsertMedication(this.newMedication).subscribe(
       () => {
         console.log('Medication upserted successfully');

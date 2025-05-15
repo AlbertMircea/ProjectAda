@@ -16,31 +16,71 @@ export class ShowPatientsComponent {
   @Input() patients!: Patient[];
   @Input() newMedication!: Prescription;
   @Output() editSuccessfully = new EventEmitter<void>();
-
+  @Output() deleteSuccessfully = new EventEmitter<void>();
+  
   editingPatient: any = null;
   addingMedicationFor: any = null;
+
+  constructor(protected patientService: PatientService) {}
 
   startEditPatient(patient: any) {
     this.editingPatient = { ...patient };
     this.addingMedicationFor = null;
   }
-  onSubmitTask()
-  {
-    this.editingPatient = null;
-    this.editSuccessfully.emit();
+
+  onSubmitEditingPatient() {
+    this.patientService.upsertPatient(this.editingPatient).subscribe({
+      next: () => {
+        console.log('Patient edited successfully');
+        this.editSuccessfully.emit();
+        this.editingPatient = null;
+
+        const container = document.querySelector(
+          '.patient-list'
+        ) as HTMLElement;
+        if (container) {
+          container.style.display = 'none';
+          container.offsetHeight; // trigger reflow
+          container.style.display = 'flex';
+        }
+      },
+      error: (error) => {
+        console.error('Failed to upsert patient', error);
+        this.editingPatient = null;
+      },
+    });
+  }
+
+  isEditingOrAdding(patient: Patient): boolean {
+    return this.editingPatient || this.addingMedicationFor;
   }
 
   onCloseEditTask() {
     this.editingPatient = null;
   }
+
   onCloseMedication() {
     this.addingMedicationFor = null;
   }
 
-  cancelEdit() {
-    this.editingPatient = null;
+  confirmDelete(patient: Patient) {
+    if (
+      confirm(
+        `Are you sure you want to delete ${patient.firstName} ${patient.lastName}?`
+      )
+    ) {
+      this.patientService.deletePatient(patient.userId).subscribe({
+        next: () => {
+          console.log('Patient deleted!');
+          this.deleteSuccessfully.emit();
+        },
+        error: (error) => {
+          console.error('Error deleting patient:', error);
+          alert('Failed to delete patient');
+        },
+      });
+    }
   }
-
 
   startAddMedication(patient: any) {
     this.addingMedicationFor = patient;
@@ -54,12 +94,4 @@ export class ShowPatientsComponent {
     };
   }
 
-  submitMedication(patient: any) {
-    // Post new medication to backend with patient ID
-    this.addingMedicationFor = null;
-  }
-
-  cancelMedication() {
-    this.addingMedicationFor = null;
-  }
 }

@@ -1,6 +1,9 @@
 <div class="patient-list">
   @for (patient of patients; track patient.userId) {
   <div class="patient-card">
+    @if (!isEditingOrAdding(patient)) {
+    <span class="close-icon" (click)="confirmDelete(patient)">×</span>
+    }
     <h2>{{ patient.firstName }} {{ patient.lastName }}</h2>
     <p><strong>Email:</strong> {{ patient.email }}</p>
     <p><strong>Gender:</strong> {{ patient.gender }}</p>
@@ -18,18 +21,24 @@
       <button (click)="startEditPatient(patient)">✏️ Edit</button>
       <button (click)="startAddMedication(patient)">💊 Add Medication</button>
     </div>
-
-    <!-- Edit Form -->
-    @if (editingPatient?.userId === patient.userId) {
-        <app-edit-pacient [patient]="editingPatient"
-        (cancel)="onCloseEditTask()" (submit)="onSubmitTask()"></app-edit-pacient>
-    }
-
-    <!-- Medication Form -->
-    @if (addingMedicationFor?.userId === patient.userId) {
-        <app-edit-medication [newMedication]="newMedication"
-        (close)="onCloseMedication()"></app-edit-medication>
-    }
   </div>
   }
 </div>
+<!-- Edit Form -->
+@if (editingPatient) {
+<app-edit-pacient
+  [patient]="editingPatient"
+  (cancel)="onCloseEditTask()"
+  (submit)="onSubmitEditingPatient()"
+  editPurposeText="Edit Patient"
+></app-edit-pacient>
+}
+
+<!-- Medication Form -->
+@if (addingMedicationFor) {
+<app-edit-medication
+  [newMedication]="newMedication"
+  (close)="onCloseMedication()"
+></app-edit-medication>
+
+}
