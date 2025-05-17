@@ -246,3 +246,4 @@ GO
 
 SELECT * FROM TutorialAppSchema.Auth
 SELECT * FROM TutorialAppSchema.Patients
+SELECT * FROM TutorialAppSchema.Medication

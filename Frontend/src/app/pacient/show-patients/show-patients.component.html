@@ -1,9 +1,9 @@
 <div class="patient-list">
   @for (patient of patients; track patient.userId) {
   <div class="patient-card">
-    @if (!isEditingOrAdding(patient)) {
+    @if(roleOfTheLoggedUser() == 'Doctor'){ @if (!isEditingOrAdding(patient)) {
     <span class="close-icon" (click)="confirmDelete(patient)">×</span>
-    }
+    } }
     <h2>{{ patient.firstName }} {{ patient.lastName }}</h2>
     <p><strong>Email:</strong> {{ patient.email }}</p>
     <p><strong>Gender:</strong> {{ patient.gender }}</p>
@@ -18,12 +18,17 @@
     </p>
 
     <div class="patient-actions">
+      @if(roleOfTheLoggedUser() == 'Doctor'){
       <button (click)="startEditPatient(patient)">✏️ Edit</button>
-      <button (click)="startAddMedication(patient)">💊 Add Medication</button>
+      }
+      <button (click)="goToMedications(patient.userId)">
+        💊 View Medication
+      </button>
     </div>
   </div>
   }
 </div>
+
 <!-- Edit Form -->
 @if (editingPatient) {
 <app-edit-pacient
@@ -32,13 +37,4 @@
   (submit)="onSubmitEditingPatient()"
   editPurposeText="Edit Patient"
 ></app-edit-pacient>
-}
-
-<!-- Medication Form -->
-@if (addingMedicationFor) {
-<app-edit-medication
-  [newMedication]="newMedication"
-  (close)="onCloseMedication()"
-></app-edit-medication>
-
 }

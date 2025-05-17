@@ -9,7 +9,7 @@
 }
   
   dialog {
-    width: 130%;
+    width: 90%;
     max-width: 30rem;
     background-color: #433352;
     border-radius: 6px;
@@ -18,7 +18,7 @@
     overflow: hidden;
     padding-top: 1rem;
     top: 10rem;
-    min-height: 30vh; 
+    min-height: 10vh; 
     z-index: 1000;
   }
   .form-group {

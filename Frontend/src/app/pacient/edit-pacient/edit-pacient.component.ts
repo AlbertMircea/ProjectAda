@@ -15,9 +15,7 @@ export class EditPacientComponent {
   @Input() editPurposeText = '';
   @Output() cancel =new EventEmitter<void>();
   @Output() submit =new EventEmitter<void>();
-  enteredTitle = '';
-  enteredSummary = '';
-  enteredDueDate = '';
+
 
   constructor(
     protected patientService: PatientService,

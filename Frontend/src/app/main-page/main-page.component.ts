@@ -28,14 +28,7 @@ export class MainPageComponent implements OnInit {
     this.token = localStorage.getItem('authToken') ?? 'No Token';
     this.role = localStorage.getItem('role') ?? 'No role';
 
-    if (this.username.includes('@')) {
-      this.index = this.username.indexOf('@');
-      this.username = this.service.capitalizeFirstLetter(this.username);
-      this.username = ' ' + this.username.slice(0, this.index);
-    } else {
-      this.username = this.service.capitalizeFirstLetter(this.username);
-      this.username = ' ' + this.username
-    }
+    this.username = this.service.makeNiceUsername(this.username);
 
   }
 }

@@ -10,14 +10,6 @@ export interface Patient {
   room: string;
 }
 
-export interface Prescription {
-  userId: 0;
-  medicationId: 0;
-  medication: '';
-  dosage: '';
-  quantity: 0;
-}
-
 export interface CustomTokenPayload {
   userId: string;
   exp: number;
