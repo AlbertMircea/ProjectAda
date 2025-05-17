@@ -1,7 +1,10 @@
 <header class="app-header">
     <div class="header-left">
       @if (backButtonVisible == true) {
-        <button (click)="goBack()" class="back-button">← Back to Main</button>
+        <button (click)="goBack()" class="back-button">← Go Back</button>
+      }
+      @if (isTheMainPage)  {
+        <button (click)="logout()" class="back-button">← Log Out</button>
       }
     </div>
   

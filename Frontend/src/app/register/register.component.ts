@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { PatientService } from '../pacient/pacient.service';
 
 @Component({
   selector: 'app-register',
@@ -25,19 +26,14 @@ export class RegisterComponent {
   gender = '';
   role = '';
 
-  private registerUrl = 'https://aleznauerdtc1.azurewebsites.net/Auth/Register';
-   
-
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private service:PatientService) {}
 
   private httpClient = inject(HttpClient);
   private destroyRef = inject(DestroyRef);
 
-
   onCancel() {
     this.router.navigate(['/login']);
   }
-
 
   onSubmitRegister() {
     const patientData = {
@@ -50,7 +46,7 @@ export class RegisterComponent {
       roleWorker: this.role,
     };
     if (this.email != '' && this.password != '' && this.confirmPassword != '') {
-      this.httpClient.post(this.registerUrl, patientData).subscribe({
+      this.httpClient.post(this.service.getApiAuthRegister(), patientData).subscribe({
         next: (response) => {
           this.isFetching.set(false);
           localStorage.setItem('username', this.email);
@@ -60,7 +56,7 @@ export class RegisterComponent {
           this.error.set('');
 
           setTimeout(() => {
-            window.location.href = '/login';
+            this.router.navigate(['/login']);
           }, 3000);
         },
         error: (error) => {

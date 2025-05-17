@@ -1,34 +1,33 @@
-<app-header text=Welcome{{this.username}}! [backButtonVisible]=false ></app-header>
+<app-header
+  text="Welcome{{ this.username }}!"
+  [backButtonVisible]="false"
+  [isTheMainPage]="true"
+></app-header>
 <main>
-<div class="main-container">
+  <div class="main-container">
 
+    @if (role === 'nurse' || role === 'Nurse') 
+    {
+    <h3>No job for Nurse, only on Mobile</h3>
+    } 
 
-  @if (role === 'Nurse') {
-    <div class="button-group">
-      <button (click)="goToPatients()">Display all patients</button>
-      <button>Display real-time state of the robots</button>
-      <button>Display request for a patient</button>
-    </div>
-  }
-
-  @if (role === 'Doctor') {
+    @if (role === 'Doctor' || role === 'doctor') 
+    {
     <div class="button-group">
       <button (click)="goToPatients()">Display my patients</button>
       <button>Display all finished transports</button>
     </div>
-  }
-
-  @if (role === 'Pharmacist') {
+    } 
+    
+    @if (role === 'Pharmacist' || role === 'pharmacist') 
+    {
     <div class="button-group">
       <button (click)="goToPatients()">Display all patients</button>
       <button>Display all transports</button>
       <button>Verify the request for a patient</button>
-      <button>Send the requested drug</button>
-      <button>Decline the requested drug</button>
+      <!-- <button>Send the requested drug</button>
+      <button>Decline the requested drug</button> -->
     </div>
-  }
-</div>
-
-
-  </main>
-  
+    }
+  </div>
+</main>

@@ -1,11 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { PatientService } from './pacient.service';
-import { Patient, Prescription } from './pacient.model';
+import { Patient } from './pacient.model';
 import { HeaderComponent } from '../header/header.component';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { EditPacientComponent } from './edit-pacient/edit-pacient.component';
 import { ShowPatientsComponent } from './show-patients/show-patients.component';
+import { NavigationService } from '../app-routes/navigation.service';
 
 @Component({
   selector: 'app-pacient',
@@ -21,6 +22,8 @@ import { ShowPatientsComponent } from './show-patients/show-patients.component';
 })
 export class PacientComponent {
   patients = signal<Patient[]>([]);
+  doctorIdOfLoggedUser = signal<number | undefined>(undefined);
+  roleOfTheLoggedUser = signal<string>('No role');
   initialPatients = signal<Patient[]>([]);
 
   showAddPatientForm = false;
@@ -29,7 +32,6 @@ export class PacientComponent {
   searchTerm = '';
   isEditing = false;
 
-  newMedication!: Prescription;
   newPatient: Patient = {
     userId: 0,
     email: '',
@@ -42,10 +44,7 @@ export class PacientComponent {
     room: '',
   };
 
-  constructor(
-    protected patientService: PatientService,
-    private router: Router
-  ) {}
+  constructor(protected patientService: PatientService) {}
 
   onCloseEditTask() {
     this.isEditing = false;
@@ -63,7 +62,6 @@ export class PacientComponent {
     });
     this.isEditing = false;
     this.refreshPatients(true);
-
   }
 
   onSearch() {
@@ -86,31 +84,51 @@ export class PacientComponent {
   }
 
   refreshPatients(init: boolean) {
-    this.patientService.getPatients().subscribe((data) => {
-      this.patients.set(data);
+    this.patientService.getAllPatients().subscribe((data) => {
+      const uniquePatientsMap = new Map<number, any>();
+
+      for (const patient of data) {
+        if (!uniquePatientsMap.has(patient.userId)) {
+          uniquePatientsMap.set(patient.userId, patient);
+        }
+      }
+      const uniquePatients = Array.from(uniquePatientsMap.values());
+      this.patients.set(uniquePatients);
+      
       if (init === true) {
-        this.initialPatients.set(data);
+        this.initialPatients.set(uniquePatients);
         this.isFirstTime = 1;
       }
     });
-    
   }
 
   ngOnInit(): void {
     this.username = localStorage.getItem('username') ?? 'User';
 
-    if (this.username.includes('@')) {
-      const index = this.username.indexOf('@');
-      this.username = this.patientService.capitalizeFirstLetter(this.username);
-      this.username = ' ' + this.username.slice(0, index);
-    } else {
-      this.username = this.patientService.capitalizeFirstLetter(this.username);
-      this.username = ' ' + this.username;
-    }
+    this.username = this.patientService.makeNiceUsername(this.username);
     this.refreshPatients(true);
-  }
+    const roleFromStorage = localStorage.getItem('role');
+    this.roleOfTheLoggedUser.set(roleFromStorage ?? 'No role');
 
-  goBack() {
-    this.router.navigate(['/main']);
+    if (this.roleOfTheLoggedUser() === 'Doctor') {
+      this.patientService
+        .getUserIdLoggedInUserAndSetRole()
+        .subscribe((doctorId) => {
+          if (doctorId !== undefined) {
+            this.doctorIdOfLoggedUser.set(doctorId);
+          }
+        });
+    }
   }
+  filteredPatients = computed(() => {
+    const role = this.roleOfTheLoggedUser();
+    const doctorId = this.doctorIdOfLoggedUser();
+    const allPatients = this.patients();
+
+    if (role === 'Doctor' && doctorId !== undefined) {
+      return allPatients.filter((p) => p.doctorID === doctorId);
+    }
+
+    return allPatients;
+  });
 }

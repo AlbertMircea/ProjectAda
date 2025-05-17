@@ -1,20 +1,15 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import {
-  CustomTokenPayload,
-  Patient,
-  Prescription,
-  User,
-} from './pacient.model';
-import jwt_decode, { jwtDecode } from 'jwt-decode';
+import { catchError, map, Observable, of } from 'rxjs';
+import { CustomTokenPayload, Patient, User } from './pacient.model';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PatientService {
   private apiUrlGetAllActivePatients =
-    'https://aleznauerdtc1.azurewebsites.net/PatientComplete/GetPatients/0/true';
+    'https://aleznauerdtc1.azurewebsites.net/PatientComplete/GetPatients/{userid}/true';
 
   private apiUrlUpsertPatient =
     'https://aleznauerdtc1.azurewebsites.net/PatientComplete/UpsertPatient';
@@ -22,20 +17,41 @@ export class PatientService {
   private apiUrlGetUsers =
     'https://aleznauerdtc1.azurewebsites.net/Auth/GetAuthenticatedUsers';
 
-  private apiUrlUpsertMedication =
-    'https://aleznauerdtc1.azurewebsites.net/Prescription/UpsertMedication';
-
   private apiUrlDeletePatient =
     'https://aleznauerdtc1.azurewebsites.net/PatientComplete/PatientDelete/';
 
+  private apiAuthLogin = 'https://aleznauerdtc1.azurewebsites.net/Auth/Login';
+
+  private registerUrl = 'https://aleznauerdtc1.azurewebsites.net/Auth/Register';
+
   constructor(private http: HttpClient) {}
 
-  getPatients(): Observable<Patient[]> {
+  getApiAuthLogin() {
+    return this.apiAuthLogin;
+  }
+
+  getApiAuthRegister() {
+    return this.registerUrl;
+  }
+
+  getPatientsByID(userId: string): Observable<Patient> {
+    const url = this.apiUrlGetAllActivePatients.replace('{userid}', userId);
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
-    return this.http.get<Patient[]>(this.apiUrlGetAllActivePatients, {
+    return this.http.get<Patient>(url, {
+      headers,
+    });
+  }
+
+  getAllPatients(): Observable<Patient[]> {
+    const url = this.apiUrlGetAllActivePatients.replace('{userid}', '0');
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    return this.http.get<Patient[]>(url, {
       headers,
     });
   }
@@ -46,16 +62,6 @@ export class PatientService {
       Authorization: `Bearer ${token}`,
     });
     return this.http.put<void>(this.apiUrlUpsertPatient, patient, { headers });
-  }
-
-  upsertMedication(medication: Prescription): Observable<void> {
-    const token = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-    return this.http.put<void>(this.apiUrlUpsertMedication, medication, {
-      headers,
-    });
   }
 
   deletePatient(userId: number): Observable<void> {
@@ -73,45 +79,58 @@ export class PatientService {
     return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
   }
 
+  makeNiceUsername(username: string) {
+    if (username.includes('@')) {
+      const index = username.indexOf('@');
+      username = this.capitalizeFirstLetter(username);
+      username = ' ' + username.slice(0, index);
+    } else {
+      username = this.capitalizeFirstLetter(username);
+      username = ' ' + username;
+    }
+    return username;
+  }
+
   getUserIdFromToken(): number {
     const token = localStorage.getItem('authToken');
 
     if (token) {
-      const decoded = jwtDecode<CustomTokenPayload>(token);
-      if (token) {
-        try {
-          const decoded = jwtDecode<CustomTokenPayload>(token);
-          return Number(decoded.userId);
-        } catch (error) {
-          console.error('Error decoding token:', error);
-          return 0;
-        }
-      } else {
-        console.error('No token found');
+      try {
+        const decoded = jwtDecode<CustomTokenPayload>(token);
+        return Number(decoded.userId);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        return 0;
       }
+    } else {
+      console.error('No token found');
     }
     return 0;
   }
 
-  getRoleWorkerOfLoggedInUser() {
-    const userId = this.getUserIdFromToken();
-    if (!userId) {
-      console.error('No userId found in token');
-      return;
-    }
-
-    this.http.get<User[]>(this.apiUrlGetUsers).subscribe(
-      (users) => {
-        const foundUser = users.find((u) => u.userId === userId);
-        if (foundUser) {
-          localStorage.setItem('role', foundUser.roleWorker);
-        } else {
-          console.warn('User not found');
-        }
-      },
-      (err) => {
-        console.error('Failed to fetch users', err);
-      }
-    );
+getUserIdLoggedInUserAndSetRole(): Observable<number | undefined> {
+  const userId = this.getUserIdFromToken();
+  if (!userId) {
+    console.error('No userId found in token');
+    return of(undefined);
   }
+
+  return this.http.get<User[]>(this.apiUrlGetUsers).pipe(
+    map((users) => {
+      const foundUser = users.find((u) => u.userId === userId);
+      if (foundUser) {
+        localStorage.setItem('role', foundUser.roleWorker);
+        console.log(foundUser);
+        return foundUser.userId;
+      } else {
+        console.warn('User not found');
+        return undefined;
+      }
+    }),
+    catchError((err) => {
+      console.error('Failed to fetch users', err);
+      return of(undefined);
+    })
+  );
+}
 }

@@ -1,0 +1,66 @@
+<app-header
+  text="Welcome {{ username }}!"
+  [backButtonVisible]="true"
+></app-header>
+
+<div class="patient-medication-container">
+  <!-- Patient Details Section -->
+  <div class="patient-info-section">
+    <h2>Patient Details</h2>
+    <div class="patient-info">
+      <h3>{{ patient.firstName }} {{ patient.lastName }}</h3>
+      <p><strong>Email:</strong> {{ patient.email }}</p>
+      <p><strong>Gender:</strong> {{ patient.gender }}</p>
+      <p><strong>Ward:</strong> {{ patient.ward }}</p>
+      <p><strong>Room:</strong> {{ patient.room }}</p>
+    </div>
+  </div>
+
+  <!-- Medication Details Section -->
+  <div class="medication-info-section">
+    <div class="medications-header">
+      <h2>Medication Details</h2>
+      @if(roleOfTheLoggedUser() == 'Doctor'){
+      <button (click)="addMedication()">➕ Add Medication</button>
+      }
+    </div>
+
+    <div class="medication-list">
+      @if (listEmpty()) { @for (med of medications; track $index) {
+      <div class="medication-card">
+        @if(roleOfTheLoggedUser() == 'Doctor'){
+        <span class="close-icon" (click)="deleteMedication(med)">×</span>
+        }
+        <p><strong>Medication:</strong> {{ med.medication }}</p>
+        <p><strong>Dosage:</strong> {{ med.dosage }}</p>
+        <p><strong>Quantity:</strong> {{ med.quantity }}</p>
+        @if(roleOfTheLoggedUser() == 'Doctor'){
+        <div class="medication-actions">
+          <button (click)="editMedication(med)">✏️ Modify</button>
+        </div>
+        }
+      </div>
+      } } @else {
+      <h4>Currently no medication for the current patient!</h4>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Edit Medication Modal -->
+@if (editingMeds) {
+<app-edit-medication
+  (close)="onCloseEditMeds()"
+  (submit)="onSubmitEditMeds()"
+  [newMedication]="editingMeds"
+>
+</app-edit-medication>
+} @if (addMeds) {
+
+<app-edit-medication
+  (close)="onCloseAddMeds()"
+  (submit)="onSubmitAddMeds()"
+  [newMedication]="newMeds"
+>
+</app-edit-medication>
+}
