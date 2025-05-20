@@ -1,7 +1,7 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Patient } from '../pacient.model';
-import { PatientService } from '../pacient.service';
+import { Patient } from '../../models/pacient.model';
+import { PatientService } from '../../services/pacient.service';
 
 @Component({
   selector: 'app-edit-pacient',

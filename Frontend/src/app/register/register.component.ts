@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { PatientService } from '../pacient/pacient.service';
+import { PatientService } from '../services/pacient.service';
 
 @Component({
   selector: 'app-register',

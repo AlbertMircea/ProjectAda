@@ -38,7 +38,12 @@
       /></label>
     </div>
     <div class="form-group">
-      <label>Ward: <input [(ngModel)]="patient.ward" name="Ward" /></label>
+      <label for="Ward">Ward</label>
+      <select id="Ward" [(ngModel)]="patient.ward" name="Ward" required>
+        <option value="" disabled selected>Select a ward</option>
+        <option value="Emergency">Emergency</option>
+        <option value="General Medicine">General Medicine</option>
+      </select>
     </div>
     <div class="form-group">
       <label>Room: <input [(ngModel)]="patient.room" name="Room" /></label>

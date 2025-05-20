@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { NotificationService } from './services/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,9 @@ import { RouterModule } from '@angular/router';
   imports: [RouterModule],
   templateUrl: './app.component.html'
 })
-export class AppComponent {}
+export class AppComponent {
+
+  constructor(private notificationService: NotificationService) {
+  this.notificationService.requestPermission();
+}
+}

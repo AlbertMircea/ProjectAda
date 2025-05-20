@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
-import { Patient } from '../../pacient/pacient.model';
-import { Medication } from '../medication.model';
+import { Patient } from '../../models/pacient.model';
+import { Medication } from '../../models/medication.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MedicationService } from '../medication.service';
-import { PatientService } from '../../pacient/pacient.service';
+import { MedicationService } from '../../services/medication.service';
+import { PatientService } from '../../services/pacient.service';
 import { HeaderComponent } from '../../header/header.component';
 import { EditMedicationComponent } from '../edit-medication/edit-medication.component';
 

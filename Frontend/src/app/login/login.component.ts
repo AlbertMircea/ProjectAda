@@ -5,7 +5,7 @@ import { HeaderComponent } from '../header/header.component';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, throwError } from 'rxjs';
 import { Router } from '@angular/router';
-import { PatientService } from '../pacient/pacient.service';
+import { PatientService } from '../services/pacient.service';
 
 @Component({
   selector: 'app-login',
