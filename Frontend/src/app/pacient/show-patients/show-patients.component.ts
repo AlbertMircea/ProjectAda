@@ -24,7 +24,6 @@ export class ShowPatientsComponent {
 
   editingPatient: any = null;
   redirectToMedication = false;
-  test = false;
 
   constructor(
     protected patientService: PatientService,
@@ -34,7 +33,7 @@ export class ShowPatientsComponent {
 
   ngOnInit(): void {
     this.roleOfTheLoggedUser.set(localStorage.getItem('role') ?? 'No role');
-    this.notifyService.notify('Update', 'Your changes have been saved!');
+    this.notifyService.notify('Update', 'Testing the notification!');
   
   }
 
