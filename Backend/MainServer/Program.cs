@@ -19,7 +19,12 @@ builder.Services.AddCors(options =>
     {
         corsBuilder.WithOrigins(
             "https://myProductionSite.com",  // your real frontend
-            "http://localhost:4200"          // local dev Angular
+            "http://localhost:4200",                    // Local Angular
+            "http://localhost:8100",                    // Mobile dev
+            "capacitor://localhost",                    // Capacitor apps
+            "https://aleznauerdtc1.azurewebsites.net",  // Main
+            "https://aleznauerwarda.azurewebsites.net", // Ward A
+            "https://aleznauerwardb.azurewebsites.net"  // Ward B
         )
         .AllowAnyMethod()
         .AllowAnyHeader()

@@ -1,10 +1,12 @@
 import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
-import { Patient } from '../pacient.model';
+import { Patient } from '../../models/pacient.model';
 import { FormsModule } from '@angular/forms';
 import { EditPacientComponent } from '../edit-pacient/edit-pacient.component';
-import { PatientService } from '../pacient.service';
+import { PatientService } from '../../services/pacient.service';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { NotificationService } from '../../services/notification.service';
+
 
 @Component({
   selector: 'app-show-patients',
@@ -25,11 +27,14 @@ export class ShowPatientsComponent {
 
   constructor(
     protected patientService: PatientService,
-    private router: Router
+    private router: Router,
+    private notifyService: NotificationService
   ) {}
 
   ngOnInit(): void {
     this.roleOfTheLoggedUser.set(localStorage.getItem('role') ?? 'No role');
+    this.notifyService.notify('Update', 'Testing the notification!');
+  
   }
 
   startEditPatient(patient: any) {

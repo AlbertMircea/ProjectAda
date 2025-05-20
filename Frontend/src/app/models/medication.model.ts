@@ -1,4 +1,4 @@
-import { Patient } from "../pacient/pacient.model";
+import { Patient } from "./pacient.model";
 
 
 export interface PatientComplete extends Patient {

@@ -1,6 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
-import { PatientService } from './pacient.service';
-import { Patient } from './pacient.model';
+import { PatientService } from '../services/pacient.service';
+import { Patient } from '../models/pacient.model';
 import { HeaderComponent } from '../header/header.component';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -31,6 +31,8 @@ export class PacientComponent {
   username = '';
   searchTerm = '';
   isEditing = false;
+  isSubmitting = false;
+
 
   newPatient: Patient = {
     userId: 0,
@@ -52,16 +54,32 @@ export class PacientComponent {
   }
 
   onSubmitAddingPatient() {
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
     this.patientService.upsertPatient(this.newPatient).subscribe({
       next: () => {
         console.log('Patient added successfully');
+        this.isEditing = false;
+        this.isSubmitting = false;
+        this.refreshPatients(true);
+        this.newPatient = {
+          userId: 0,
+          email: '',
+          firstName: '',
+          lastName: '',
+          gender: '',
+          active: true,
+          doctorID: this.patientService.getUserIdFromToken(),
+          ward: '',
+          room: '',
+        };
       },
       error: (error) => {
         console.error('Failed to upsert patient', error);
+        this.isEditing = false;
+        this.isSubmitting = false;
       },
     });
-    this.isEditing = false;
-    this.refreshPatients(true);
   }
 
   onSearch() {
@@ -94,7 +112,7 @@ export class PacientComponent {
       }
       const uniquePatients = Array.from(uniquePatientsMap.values());
       this.patients.set(uniquePatients);
-      
+
       if (init === true) {
         this.initialPatients.set(uniquePatients);
         this.isFirstTime = 1;

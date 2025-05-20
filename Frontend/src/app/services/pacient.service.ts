@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, Observable, of } from 'rxjs';
-import { CustomTokenPayload, Patient, User } from './pacient.model';
+import { CustomTokenPayload, Patient, User } from '../models/pacient.model';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
@@ -120,7 +120,6 @@ getUserIdLoggedInUserAndSetRole(): Observable<number | undefined> {
       const foundUser = users.find((u) => u.userId === userId);
       if (foundUser) {
         localStorage.setItem('role', foundUser.roleWorker);
-        console.log(foundUser);
         return foundUser.userId;
       } else {
         console.warn('User not found');
