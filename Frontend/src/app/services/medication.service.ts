@@ -8,13 +8,13 @@ import { Medication, PatientComplete } from '../models/medication.model';
 })
 export class MedicationService {
   private apiUrlUpsertMedication =
-    'https://aleznauerdtc1.azurewebsites.net/Prescription/UpsertMedication';
+    'https://aleznauerdtc2.azurewebsites.net/Prescription/UpsertMedication';
 
   private apiUrlPatientComplete =
-    'https://aleznauerdtc1.azurewebsites.net/PatientComplete';
+    'https://aleznauerdtc2.azurewebsites.net/PatientComplete';
 
   private apiUrlDeleteMedication =
-    'https://aleznauerdtc1.azurewebsites.net/Prescription/MedicationDelete/';
+    'https://aleznauerdtc2.azurewebsites.net/Prescription/MedicationDelete/';
 
   constructor(private http: HttpClient) {}
 
