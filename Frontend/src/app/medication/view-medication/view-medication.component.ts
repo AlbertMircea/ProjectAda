@@ -96,6 +96,7 @@ export class ViewMedicationComponent {
         (med) => med.medication !== ''
       );
       this.listEmpty.set(hasRealMedications);
+      this.refreshMeds();
     });
   }
 
@@ -156,6 +157,12 @@ export class ViewMedicationComponent {
     this.medicationService.upsertMedication(this.newMeds).subscribe(
       () => {
         console.log('Medication inserted successfully');
+        const hasRealMedications = this.medications.some(
+        (med) => med.medication !== ''
+      );
+
+      this.listEmpty.set(hasRealMedications);
+        this.refreshMeds();
       },
       (error) => {
         console.error('Failed to inserted medication', error);

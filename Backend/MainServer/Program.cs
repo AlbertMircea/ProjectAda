@@ -22,9 +22,9 @@ builder.Services.AddCors(options =>
             "http://localhost:4200",                    // Local Angular
             "http://localhost:8100",                    // Mobile dev
             "capacitor://localhost",                    // Capacitor apps
-            "https://aleznauerdtc1.azurewebsites.net",  // Main
-            "https://aleznauerwarda.azurewebsites.net", // Ward A
-            "https://aleznauerwardb.azurewebsites.net"  // Ward B
+            "https://aleznauerdtc2.azurewebsites.net",  // Main
+            "https://aleznauer-ward-emergency2.azurewebsites.net", // Ward A
+            "https://aleznauer-ward-general2.azurewebsites.net"  // Ward B
         )
         .AllowAnyMethod()
         .AllowAnyHeader()

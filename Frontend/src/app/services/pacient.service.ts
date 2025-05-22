@@ -9,20 +9,20 @@ import { jwtDecode } from 'jwt-decode';
 })
 export class PatientService {
   private apiUrlGetAllActivePatients =
-    'https://aleznauerdtc1.azurewebsites.net/PatientComplete/GetPatients/{userid}/true';
+    'https://aleznauerdtc2.azurewebsites.net/PatientComplete/GetPatients/{userid}/true';
 
   private apiUrlUpsertPatient =
-    'https://aleznauerdtc1.azurewebsites.net/PatientComplete/UpsertPatient';
+    'https://aleznauerdtc2.azurewebsites.net/PatientComplete/UpsertPatient';
 
   private apiUrlGetUsers =
-    'https://aleznauerdtc1.azurewebsites.net/Auth/GetAuthenticatedUsers';
+    'https://aleznauerdtc2.azurewebsites.net/Auth/GetAuthenticatedUsers';
 
   private apiUrlDeletePatient =
-    'https://aleznauerdtc1.azurewebsites.net/PatientComplete/PatientDelete/';
+    'https://aleznauerdtc2.azurewebsites.net/PatientComplete/PatientDelete/';
 
-  private apiAuthLogin = 'https://aleznauerdtc1.azurewebsites.net/Auth/Login';
+  private apiAuthLogin = 'https://aleznauerdtc2.azurewebsites.net/Auth/Login';
 
-  private registerUrl = 'https://aleznauerdtc1.azurewebsites.net/Auth/Register';
+  private registerUrl = 'https://aleznauerdtc2.azurewebsites.net/Auth/Register';
 
   constructor(private http: HttpClient) {}
 

@@ -14,7 +14,7 @@ namespace DotnetAPI.Helpers
         public MainServerBridge(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("https://aleznauerdtc1.azurewebsites.net");
+            _httpClient.BaseAddress = new Uri("https://aleznauerdtc2.azurewebsites.net");
         }
 
         public async Task SyncMedication(Prescription med, string token)
