@@ -36,6 +36,42 @@ public class PrescriptionController : ControllerBase
         throw new Exception("Failed to Update Medication");
     }
 
+    [HttpGet("GetMedicationByUserId/{userId}")]
+    public IEnumerable<Prescription> GetMedicationByUser(int userId = 0)
+    {
+        string sql = @"EXEC TutorialAppSchema.spMedication_Get ";
+        string parameters = "";
+        if (userId != 0)
+        {
+            parameters += " @UserId = " + userId.ToString();
+        }
+
+        if (parameters.Length > 0)
+            sql += parameters.Substring(1);
+
+        return _dapper.LoadData<Prescription>(sql);
+
+        throw new Exception("Failed to Get Medications");
+    }
+
+    [HttpGet("GetMedicationByMedicationId/{medicationId}")]
+    public IEnumerable<Prescription> GetMedicationByMedication(int medicationId = 0)
+    {
+        string sql = @"EXEC TutorialAppSchema.spMedication_Request ";
+        string parameters = "";
+        if (medicationId != 0)
+        {
+            parameters += " @MedicationId = " + medicationId.ToString();
+        }
+
+        if (parameters.Length > 0)
+            sql += parameters.Substring(1);
+
+        return _dapper.LoadData<Prescription>(sql);
+
+        throw new Exception("Failed to Get Medications");
+    }
+
 
 
     [HttpDelete("MedicationDelete/{medicationId}")]

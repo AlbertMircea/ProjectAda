@@ -39,6 +39,19 @@ namespace DotnetAPI.Helpers
             return result ?? new List<PatientComplete>();
         }
 
+        public async Task<List<Prescription>> RequestMedication(int medicationId, string token)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            string endpoint = $"/Prescription/GetMedicationByMedicationId/{medicationId}";
+            var response = await _httpClient.GetAsync(endpoint);
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<List<Prescription>>();
+            return result ?? new List<Prescription>();
+        }
+        
     }
 
 }
