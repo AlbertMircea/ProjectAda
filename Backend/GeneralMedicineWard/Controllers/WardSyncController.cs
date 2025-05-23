@@ -42,4 +42,18 @@ public class WardSyncController : ControllerBase
         var patients = await _bridge.FetchPatients(userId, isActive, token);
         return Ok(patients);
     }
+
+    
+    [HttpGet("request-medication/{medicationId}")]
+    public async Task<IActionResult> GetMedication(
+    int medicationId,
+    [FromHeader(Name = "Authorization")] string authHeader)
+    {
+        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            return Unauthorized("Missing or invalid Authorization header");
+
+        var token = authHeader.Substring("Bearer ".Length);
+        var medications = await _bridge.RequestMedication(medicationId, token);
+        return Ok(medications);
+    }
 }
