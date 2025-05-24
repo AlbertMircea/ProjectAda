@@ -1,5 +1,6 @@
 using System.Text;
 using DotnetAPI.Data;
+using DotnetAPI.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -53,6 +54,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options => {
             options.TokenValidationParameters = tokenValidationParameters;
         });
+        
+builder.Services.AddSignalR();
 
 var app = builder.Build();
  
@@ -74,6 +77,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<NotificationHub>("/hubs/notifications");
 
 app.Run();
 
