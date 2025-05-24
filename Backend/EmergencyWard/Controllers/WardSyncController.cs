@@ -26,7 +26,7 @@ public class WardSyncController : ControllerBase
         var token = authHeader.Substring("Bearer ".Length);
         System.Console.WriteLine(token);
         await _bridge.SyncMedication(med, token);
-        return Ok("Synced to main server.");
+        return Ok("Medication pushed to the main server.");
     }
 
     [HttpGet("get-patients/{userId}/{isActive}")]
@@ -43,8 +43,8 @@ public class WardSyncController : ControllerBase
         return Ok(patients);
     }
 
-    
-    [HttpGet("request-medication/{medicationId}")]
+
+    [HttpGet("get-medication/{medicationId}")]
     public async Task<IActionResult> GetMedication(
     int medicationId,
     [FromHeader(Name = "Authorization")] string authHeader)
@@ -53,7 +53,22 @@ public class WardSyncController : ControllerBase
             return Unauthorized("Missing or invalid Authorization header");
 
         var token = authHeader.Substring("Bearer ".Length);
-        var medications = await _bridge.RequestMedication(medicationId, token);
+        var medications = await _bridge.GetMedication(medicationId, token);
         return Ok(medications);
     }
+
+    [HttpPost("request-medication")]
+    public async Task<IActionResult> RequestMedication(
+     [FromBody] RequestPrescription request,
+     [FromHeader(Name = "Authorization")] string authHeader)
+    {
+        if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer "))
+            return Unauthorized("Missing or invalid Authorization header.");
+
+        var token = authHeader["Bearer ".Length..].Trim();
+
+        await _bridge.SyncMedicationRequest(request, token);
+        return Ok("Medication requested to the main server.");
+    }
+
 }

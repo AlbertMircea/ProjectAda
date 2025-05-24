@@ -29,7 +29,7 @@ namespace DotnetAPI.Data
         public bool ExecuteSql(string sql)
         {
             IDbConnection dbConnection = new SqlConnection(_connectionString);
-            return (dbConnection.Execute(sql)>0);
+            return dbConnection.Execute(sql)>0;
         }
         
         public int ExecuteSqlWithRowCount(string sql)
