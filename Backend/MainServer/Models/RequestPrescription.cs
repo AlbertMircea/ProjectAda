@@ -14,6 +14,8 @@ namespace DotnetAPI.Models
 
         public int Quantity { get; set; }
 
+        public DateTime RequestedAt { get; set; }
+
         public RequestPrescription()
         {
             if (Status == null)

@@ -1,0 +1,55 @@
+.patient-card {
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 1rem;
+  width: 350px;
+  height: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+  justify-content: space-between;
+  margin: 1rem;
+  color: #fff;
+  overflow: hidden;
+}
+
+.patient-actions button {
+  margin-right: 0.5rem;
+}
+
+.patient-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.patient-actions button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  background-color: #9c73ca;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.3s ease;
+}
+
+.patient-actions button:hover {
+  background-color: #895cce;
+}
+
+.patient-actions button:active {
+  background-color: #774bb0;
+}
+
+.medication-request-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}

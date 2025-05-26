@@ -70,6 +70,13 @@ public class AuthController : ControllerBase{
         return _dapper.LoadData<User>(sql);
     }
 
+    [HttpGet("GetUser/{userId}")]
+    public User GetUser(int userId)
+    {
+        string sql = "SELECT * FROM TutorialAppSchema.Auth WHERE UserId = " + userId.ToString();
+        return _dapper.LoadDataSingle<User>(sql);
+    }
+
 
     [AllowAnonymous]
     [HttpPost("Login")]

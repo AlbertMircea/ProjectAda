@@ -16,6 +16,9 @@ export class MedicationService {
   private apiUrlDeleteMedication =
     'https://aleznauerdtc2.azurewebsites.net/Prescription/MedicationDelete/';
 
+  private apiUrlGetMedication =
+    'https://aleznauerdtc2.azurewebsites.net/Prescription/GetMedicationByMedicationId';
+
   constructor(private http: HttpClient) {}
 
   upsertMedication(medication: Medication): Observable<void> {
@@ -52,6 +55,18 @@ export class MedicationService {
 
     return this.http.get<PatientComplete[]>(
       `${this.apiUrlPatientComplete}/GetPatients/${userId}/${isActive}`,
+      { headers }
+    );
+  }
+  
+  getPatientByMedicationId(medicationId: string): Observable<Medication[]> {
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.get<Medication[]>(
+      `${this.apiUrlGetMedication}/${medicationId}`,
       { headers }
     );
   }

@@ -103,10 +103,32 @@ public class PrescriptionController : ControllerBase
                 "', @Quantity = '" + request.Quantity +
                 "', @Status = '" + request.Status + "'";
         _dapper.ExecuteSql(sql);
-        
+
         await _hubContext.Clients.All.SendAsync("ReceiveMessage", "New prescription received!");
         return Ok("Medication request upserted successfully.");
 
+    }
+
+    [HttpGet("GetAllMedicationRequests")]
+    public IEnumerable<RequestPrescription> GetAllTransportRequests()
+    {
+        string sql = @"SELECT * FROM TutorialAppSchema.MedicationRequest";
+        return _dapper.LoadData<RequestPrescription>(sql);
+
+        throw new Exception("Failed to Get Medication Requests");
+    }
+
+    [HttpDelete("MedicationRequestDelete/{requestId}")]
+    public IActionResult DeleteRequestMedication(int requestId)
+    {
+        string sql = @"EXEC TutorialAppSchema.spMedicationRequest_Delete @RequestId =" + requestId.ToString();
+
+        if (_dapper.ExecuteSql(sql))
+        {
+            return Ok();
+        }
+
+        throw new Exception("Failed to Delete Requested Medication");
     }
 
 

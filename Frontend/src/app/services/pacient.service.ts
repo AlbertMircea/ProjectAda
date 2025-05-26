@@ -17,12 +17,17 @@ export class PatientService {
   private apiUrlGetUsers =
     'https://aleznauerdtc2.azurewebsites.net/Auth/GetAuthenticatedUsers';
 
+  private apiUrlGetUser =
+    'https://aleznauerdtc2.azurewebsites.net/Auth/GetUser/{userid}';
+
   private apiUrlDeletePatient =
     'https://aleznauerdtc2.azurewebsites.net/PatientComplete/PatientDelete/';
 
   private apiAuthLogin = 'https://aleznauerdtc2.azurewebsites.net/Auth/Login';
 
   private registerUrl = 'https://aleznauerdtc2.azurewebsites.net/Auth/Register';
+
+  private getPatient = 'https://aleznauerdtc2.azurewebsites.net/PatientComplete/GetPatient/{userid}'
 
   constructor(private http: HttpClient) {}
 
@@ -35,12 +40,24 @@ export class PatientService {
   }
 
   getPatientsByID(userId: string): Observable<Patient> {
-    const url = this.apiUrlGetAllActivePatients.replace('{userid}', userId);
+    const url = this.getPatient.replace('{userid}', userId);
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
     return this.http.get<Patient>(url, {
+      headers,
+    });
+
+  } 
+  
+  getUserByID(userId: string): Observable<User> {
+    const url = this.apiUrlGetUser.replace('{userid}', userId);
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    return this.http.get<User>(url, {
       headers,
     });
   }
