@@ -131,5 +131,19 @@ public class PrescriptionController : ControllerBase
         throw new Exception("Failed to Delete Requested Medication");
     }
 
+    [HttpPut("UpdateStatus/{requestId}")]
+    public IActionResult UpdateStatus(int requestId, [FromBody] StatusUpdateDto dto)
+    {
+        string sql = $@"UPDATE TutorialAppSchema.MedicationRequest 
+                    SET Status = '{dto.Status}' 
+                    WHERE RequestId = {requestId}";
+
+        if (_dapper.ExecuteSql(sql))
+            return Ok();
+
+        throw new Exception("Failed to update status");
+    }
+
+
 
 }

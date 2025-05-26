@@ -23,6 +23,8 @@ export class RequestMedicationComponent implements OnInit {
   nurseMap = new Map<number, string>();
   medicationMap = new Map<number, string>();
 
+  role = '';
+
   constructor(
     private requestService: MedicationRequestService,
     protected patientService: PatientService,
@@ -30,6 +32,7 @@ export class RequestMedicationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.role = localStorage.getItem('role') ?? 'No Role';
     this.username = localStorage.getItem('username') ?? 'User';
     this.username = this.patientService.makeNiceUsername(this.username);
     this.refreshRequests();
@@ -98,9 +101,33 @@ export class RequestMedicationComponent implements OnInit {
       },
     });
   }
+  getStatusColor(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'orange';
+      case 'transporting':
+        return 'lightblue';
+      case 'delivered':
+        return 'lightgreen';
+      default:
+        return 'gray';
+    }
+  }
 
   approveRequest(request: MedicationRequest) {
     console.log('Approving:', request);
-    // to do
+    this.requestService
+      .updateStatus(request.requestId, 'Transporting')
+      .subscribe(() => {
+        this.refreshRequests();
+        // // Simulate transport delay
+        // setTimeout(() => {
+        //   this.requestService
+        //     .updateStatus(request.requestId, 'Delivered')
+        //     .subscribe(() => {
+        //       console.log('Transport complete');
+        //     });
+        // }, 3000); // 3 seconds delay for simulation
+      });
   }
 }

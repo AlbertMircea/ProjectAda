@@ -5,26 +5,31 @@
 
 <div class="medication-request-list">
   @for (request of requests; track request.requestId) {
-    <div class="patient-card">
-      <h2>Request ID: {{ request.requestId }}</h2>
-      <p><strong>Patient:</strong> {{ request.patientName || 'Loading...' }}</p>
-      <p><strong>Nurse:</strong> {{ request.nurseName || 'Loading...' }}</p>
-      <p><strong>Medication:</strong> {{ request.medicationName || 'Loading...' }}</p>
-      <p><strong>Quantity:</strong> {{ request.quantity }}</p>
-      <p><strong>Requested At:</strong> {{ request.requestedAt | date:'medium' }}</p>
-      <p>
-        <strong>Status:</strong>
-        <span [style.color]="request.status === 'Pending' ? 'orange' : request.status === 'Approved' ? 'lightgreen' : 'salmon'">
-          {{ request.status }}
-        </span>
-      </p>
-
-      <div class="patient-actions">
-        <button (click)="denyRequest(request)"> Deny Request </button>
-        @if (request.status === 'Pending') {
-        <button (click)="approveRequest(request)"> Send Transport</button>
-        }
-      </div>
+  <div class="patient-card">
+    <h2>Request ID: {{ request.requestId }}</h2>
+    <p><strong>Patient:</strong> {{ request.patientName || "Loading..." }}</p>
+    <p><strong>Nurse:</strong> {{ request.nurseName || "Loading..." }}</p>
+    <p>
+      <strong>Medication:</strong> {{ request.medicationName || "Loading..." }}
+    </p>
+    <p><strong>Quantity:</strong> {{ request.quantity }}</p>
+    <p>
+      <strong>Requested At:</strong> {{ request.requestedAt | date : "medium" }}
+    </p>
+    <p>
+      <strong>Status:</strong>
+      <span [ngStyle]="{ color: getStatusColor(request.status) }">
+        {{ request.status }}
+      </span>
+    </p>
+@if (role == 'Pharmacist') {
+    <div class="patient-actions">
+      <button (click)="denyRequest(request)">Deny Request</button>
+      @if (request.status === 'Pending') {
+      <button (click)="approveRequest(request)">Send Transport</button>
+      }
     </div>
+  }
+  </div>
   }
 </div>
