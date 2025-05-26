@@ -4,6 +4,7 @@ import { MainPageComponent } from '../main-page/main-page.component';
 import { PacientComponent } from '../pacient/pacient.component';
 import { RegisterComponent } from '../register/register.component';
 import { ViewMedicationComponent } from '../medication/view-medication/view-medication.component';
+import { RequestMedicationComponent } from '../medication/request-medication/request-medication.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -11,6 +12,6 @@ export const routes: Routes = [
   { path: 'main', component: MainPageComponent },
   { path: 'patients', component: PacientComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'view-medication/:userId', component: ViewMedicationComponent }
-
+  { path: 'view-medication/:userId', component: ViewMedicationComponent },
+  { path: 'medication-requests', component: RequestMedicationComponent }
 ];

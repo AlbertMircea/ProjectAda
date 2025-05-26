@@ -22,6 +22,10 @@ export class MainPageComponent implements OnInit {
   goToPatients() {
     this.router.navigate(['/patients']);
   }
+  goToTransports()
+  {
+    this.router.navigate(['/medication-requests'])
+  }
 
   ngOnInit(): void {
     this.username = localStorage.getItem('username') ?? 'User';

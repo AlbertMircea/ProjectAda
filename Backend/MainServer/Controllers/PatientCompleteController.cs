@@ -18,7 +18,7 @@ public class PatientCompleteController : ControllerBase
     }
 
     [HttpGet("GetPatients/{userId}/{isActive}")]
-    public IEnumerable<PatientComplete> GetUsers(int userId = 0, bool isActive = false)
+    public IEnumerable<PatientComplete> GetPatients(int userId = 0, bool isActive = false)
     {
         string sql = @"EXEC TutorialAppSchema.spPatient_Get";
         string parameters = "";
@@ -33,6 +33,13 @@ public class PatientCompleteController : ControllerBase
             sql += parameters.Substring(1);
 
         return _dapper.LoadData<PatientComplete>(sql);
+    }
+
+    [HttpGet("GetPatient/{userId}")]
+    public Patient GetPatient(int userId)
+    {
+        string sql = @"SELECT * FROM TutorialAppSchema.Patients WHERE UserId = " + userId.ToString();
+        return _dapper.LoadDataSingle<Patient>(sql);
     }
 
 
