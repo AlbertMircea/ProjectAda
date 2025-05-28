@@ -42,6 +42,13 @@ public class PatientCompleteController : ControllerBase
         return _dapper.LoadDataSingle<Patient>(sql);
     }
 
+    [HttpGet("GetOnlyPatients")]
+    public IEnumerable<Patient> GetOnlyPatients()
+    {
+        string sql = @"SELECT * FROM TutorialAppSchema.Patients";
+        return _dapper.LoadData<Patient>(sql);
+    }
+
 
     [HttpPut("UpsertPatient")]
     public IActionResult UpsertUser(Patient patient)
