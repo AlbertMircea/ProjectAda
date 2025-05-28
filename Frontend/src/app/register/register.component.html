@@ -9,7 +9,7 @@
     } @else if (success()) {
     <p class="fallback-text">Register Successfully</p>
     }
-  <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+  <form (ngSubmit)="onSubmitRegister()" #registerForm="ngForm">
     <label for="email">Email</label>
     <input type="email" id="email" required [(ngModel)]="email" name="email" />
 
@@ -53,30 +53,8 @@
         <option value="Female">Female</option>
         <option value="Other">Other</option>
       </select>
-    <!-- 
-    <label>First Name:</label>
-  <input formControlName="firstName" type="text" />
-
-  <label>Last Name:</label>
-  <input formControlName="lastName" type="text" />
-
-  <label>Gender:</label>
-  <select formControlName="gender">
-    <option value="">Select Gender</option>
-    <option value="Male">Male</option>
-    <option value="Female">Female</option>
-    <option value="Other">Other</option>
-  </select> -->
-
     <div class="form-group">
       <label for="role">Role</label>
-      <!-- <input list = "role" placeholder="Select a role">
-    <datalist id = "role">
-        <option value="Doctor"></option>
-        <option value="Nurse"></option>
-        <option value="Pharmacist"></option>
-    </datalist> -->
-
       <select id="role" [(ngModel)]="role" name="role" required>
         <option value="" disabled selected>Select a role</option>
         <option value="Doctor">Doctor</option>

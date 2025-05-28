@@ -1,30 +1,43 @@
-<app-header text=Welcome{{this.username}}! [backButtonVisible]=true></app-header>
-<!-- <button (click)="goBack()" class="back-button">← Back to Main</button> -->
+<app-header
+  text="Welcome{{ this.username }}!"
+  [backButtonVisible]="true"
+></app-header>
 
 <main>
+  @if(roleOfTheLoggedUser() == 'Doctor'){
   <h1>My Patients</h1>
+  } @else {
+  <h1>Patients</h1>
+  }
   <div class="patient-controls">
-    <button class="add-patient-btn" (click)="onAddPatient()">➕ Add New Patient</button>
-  
+    @if (roleOfTheLoggedUser() == 'Doctor') {
+    <button class="add-patient-btn" (click)="onAddPatient()">
+      ➕ Add New Patient
+    </button>
+    }
     <div class="search-bar">
-      <input type="text"   (keydown.enter)="onSearch()" [(ngModel)]="searchTerm" placeholder="Search by name" />
+      <input
+        type="text"
+        (keydown.enter)="onSearch()"
+        [(ngModel)]="searchTerm"
+        placeholder="Search by name"
+      />
       <button (click)="onSearch()">Search</button>
     </div>
   </div>
-  @if (isFetching() || this.patientService.isFetching()) {
-  <p class="fallback-text">Fetching patients...</p>
-  } @else { @if (isEditing) {
-
-  <app-edit-pacient
-    [patient]="newPatient"
-    (close)="onCloseEditTask()"
-  ></app-edit-pacient>
-  }
-
-  <app-show-patients
-    [patients]="patients()"
-    [newMedication]="newMedication"
-  ></app-show-patients>
-
-  }
 </main>
+
+@if (isEditing) {
+<app-edit-pacient
+  [patient]="newPatient"
+  (cancel)="onCloseEditTask()"
+  (submit)="onSubmitAddingPatient()"
+  editPurposeText="Add Patient"
+></app-edit-pacient>
+}
+
+<app-show-patients
+  [patients]="filteredPatients()"
+  (editSuccessfully)="refreshPatients(true)"
+  (deleteSuccessfully)="refreshPatients(true)"
+></app-show-patients>

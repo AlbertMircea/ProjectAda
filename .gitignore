@@ -7,9 +7,17 @@ Frontend/out-tsc
 Frontend/bazel-out
 
 # Compiled output Backend
-Backend/.azure/
-Backend/bin/
-Backend/obj/
+Backend/GeneralMedicineWard/.azure/
+Backend/GeneralMedicineWard/bin/
+Backend/GeneralMedicineWard/obj/
+
+Backend/EmergencyWard/.azure/
+Backend/EmergencyWard/bin/
+Backend/EmergencyWard/obj/
+
+Backend/MainServer/.azure/
+Backend/MainServer/bin/
+Backend/MainServer/obj/
 
 # Compiled output Mobile
 # To do
@@ -26,6 +34,7 @@ Frontend/.classpath
 Frontend/.c9/
 Frontend/*.launch
 Frontend/.settings/
+Frontend/.angular
 Frontend/*.sublime-workspace
 
 # Visual Studio Code

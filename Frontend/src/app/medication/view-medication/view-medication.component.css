@@ -1,0 +1,81 @@
+.patient-medication-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: flex-start;
+  margin: 2rem;
+}
+
+.patient-info-section {
+  flex: 1;
+  min-width: 250px;
+  
+}
+
+.patient-info {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 1rem;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  
+}
+
+.medication-info-section {
+  flex: 2;
+  min-width: 300px;
+}
+
+.medications-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.medications-header button {
+  background-color: #9c73ca;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.medication-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.medication-card {
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.close-icon {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  cursor: pointer;
+  color: #e74c3c;
+  font-size: 1.5rem;
+}
+
+.close-icon:hover {
+  color: #ff5c5c;
+}
+
+.medication-actions button {
+  background-color: #9c73ca;
+  color: #fff;
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}

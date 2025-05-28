@@ -1,6 +1,7 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Patient } from '../pacient.model';
+import { Patient } from '../../models/pacient.model';
+import { PatientService } from '../../services/pacient.service';
 
 @Component({
   selector: 'app-edit-pacient',
@@ -11,19 +12,27 @@ import { Patient } from '../pacient.model';
 })
 export class EditPacientComponent {
   @Input() patient!: Patient;
-  @Output() close =new EventEmitter<void>();
-  enteredTitle = '';
-  enteredSummary = '';
-  enteredDueDate = '';
-  private tasksService = 'inject(TaskService);'
+  @Input() editPurposeText = '';
+  @Output() cancel =new EventEmitter<void>();
+  @Output() submit =new EventEmitter<void>();
 
-  onCancel(){
-    this.close.emit();
+
+  constructor(
+    protected patientService: PatientService,
+  ) {}
+
+  ngOnInit(): void 
+  {
+    this.patient.gender = this.patientService.capitalizeFirstLetter(this.patient.gender);
   }
 
-  onSubmit(){
+  onCancel(){
+    this.cancel.emit();
+  }
 
-    this.close.emit();
+  onSubmitEditPatient(){
+    this.submit.emit();
+
   }
 }
 
