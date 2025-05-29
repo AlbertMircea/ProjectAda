@@ -18,12 +18,15 @@
 
   <!-- Medication Details Section -->
   <div class="medication-info-section">
-    <div class="medications-header">
-      <h2>Medication Details</h2>
-      @if(roleOfTheLoggedUser() == 'Doctor'){
+<div class="medications-header" style="display: flex; justify-content: space-between; align-items: center;">
+  <h2>Medication Details</h2>
+  <div style="display: flex; gap: 10px;">
+    @if(roleOfTheLoggedUser() == 'Doctor'){
       <button (click)="addMedication()">➕ Add Medication</button>
-      }
-    </div>
+    }
+    <button (click)="openChat()">🤖 Have a chat with DeepSeek</button>
+  </div>
+</div>
 
     <div class="medication-list">
       @if (listEmpty()) { @for (med of medications; track $index) {
@@ -45,6 +48,8 @@
       }
     </div>
   </div>
+
+  
 </div>
 
 <!-- Edit Medication Modal -->
@@ -64,3 +69,4 @@
 >
 </app-edit-medication>
 }
+@if (chatModalVisible) {<app-chat-modal (close)="closeChat()"></app-chat-modal>}

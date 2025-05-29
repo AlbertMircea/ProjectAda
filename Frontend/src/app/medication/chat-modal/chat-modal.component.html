@@ -1,0 +1,29 @@
+<div class="backdrop" (click)="onClose()"></div>
+<dialog open>
+  <div class="form-group">
+    <h2>Ask DeepSeek</h2>
+  </div>
+  <form (ngSubmit)="sendMessage()">
+    <div class="form-group">
+      <label>
+        Your Question:
+        <textarea [(ngModel)]="chatInput" name="userInput" rows="4"></textarea>
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label>DeepSeek's Reply:</label>
+      <div class="ai-reply"><markdown [data]="chatReply"></markdown></div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" (click)="onClose()">Close</button>
+      @if (!isStreaming) {
+      <button type="submit" [disabled]="!chatInput.trim()">Ask</button>
+      }
+      @else {
+      <button type="submit" (click)="cancelStream()">Cancel</button>
+      }
+    </div>
+  </form>
+</dialog>

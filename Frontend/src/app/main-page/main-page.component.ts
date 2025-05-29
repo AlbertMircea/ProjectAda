@@ -15,16 +15,17 @@ export class MainPageComponent implements OnInit {
   @Input({ required: true }) username!: string;
   @Input({ required: true }) role!: string;
   @Input({ required: true }) token!: string;
-
-  index = 0;
-  constructor(private router: Router, private service: PatientService) {}
+  
+  constructor(
+    private router: Router,
+    private service: PatientService
+  ) {}
 
   goToPatients() {
     this.router.navigate(['/patients']);
   }
-  goToTransports()
-  {
-    this.router.navigate(['/medication-requests'])
+  goToTransports() {
+    this.router.navigate(['/medication-requests']);
   }
 
   ngOnInit(): void {
@@ -33,6 +34,5 @@ export class MainPageComponent implements OnInit {
     this.role = localStorage.getItem('role') ?? 'No role';
 
     this.username = this.service.makeNiceUsername(this.username);
-
   }
 }
