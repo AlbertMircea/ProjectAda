@@ -6,7 +6,7 @@ import { MedicationService } from '../../services/medication.service';
 import { PatientService } from '../../services/pacient.service';
 import { HeaderComponent } from '../../header/header.component';
 import { EditMedicationComponent } from '../edit-medication/edit-medication.component';
-import { ChatModalComponent } from "../chat-modal/chat-modal.component";
+import { ChatModalComponent } from '../chat-modal/chat-modal.component';
 
 @Component({
   selector: 'app-view-medication',
@@ -24,7 +24,7 @@ export class ViewMedicationComponent {
   addMeds = false;
   roleOfTheLoggedUser = signal<string>('No role');
 
-chatModalVisible = false;
+  chatModalVisible = false;
 
   newMeds: Medication = {
     userId: 0,
@@ -60,7 +60,6 @@ chatModalVisible = false;
     this.loadPatientWithMedications();
     this.roleOfTheLoggedUser.set(localStorage.getItem('role') ?? 'No role');
   }
-
 
   loadPatientWithMedications() {
     this.medicationService.getPatientComplete(this.userId).subscribe((data) => {
@@ -100,13 +99,13 @@ chatModalVisible = false;
       this.refreshMeds();
     });
   }
-openChat() {
-  this.chatModalVisible = true;
-}
+  openChat() {
+    this.chatModalVisible = true;
+  }
 
-closeChat() {
-  this.chatModalVisible = false;
-}
+  closeChat() {
+    this.chatModalVisible = false;
+  }
   onSubmitEditMeds() {
     this.medicationService.upsertMedication(this.editingMeds).subscribe(
       () => {
@@ -135,11 +134,11 @@ closeChat() {
             quantity: row.quantity,
           }));
       });
-            const hasRealMedications = this.medications.some(
-        (med) => med.medication !== ''
-      );
+    const hasRealMedications = this.medications.some(
+      (med) => med.medication !== ''
+    );
 
-      this.listEmpty.set(hasRealMedications);
+    this.listEmpty.set(hasRealMedications);
   }
 
   editMedication(med: any) {
@@ -154,6 +153,13 @@ closeChat() {
     this.confirmDelete(med);
   }
   addMedication() {
+    this.newMeds = {
+      userId: 0,
+      medicationId: 0,
+      medication: '',
+      dosage: '',
+      quantity: 0,
+    };
     this.addMeds = true;
   }
   onCloseAddMeds() {
@@ -165,11 +171,14 @@ closeChat() {
       () => {
         console.log('Medication inserted successfully');
         const hasRealMedications = this.medications.some(
-        (med) => med.medication !== ''
-      );
+          (med) => med.medication !== ''
+        );
 
-      this.listEmpty.set(hasRealMedications);
+        this.listEmpty.set(hasRealMedications);
         this.refreshMeds();
+
+        this.loadPatientWithMedications();
+        console.log(this.listEmpty);
       },
       (error) => {
         console.error('Failed to inserted medication', error);
