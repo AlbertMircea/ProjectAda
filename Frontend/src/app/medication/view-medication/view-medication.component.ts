@@ -6,11 +6,12 @@ import { MedicationService } from '../../services/medication.service';
 import { PatientService } from '../../services/pacient.service';
 import { HeaderComponent } from '../../header/header.component';
 import { EditMedicationComponent } from '../edit-medication/edit-medication.component';
+import { ChatModalComponent } from "../chat-modal/chat-modal.component";
 
 @Component({
   selector: 'app-view-medication',
   standalone: true,
-  imports: [HeaderComponent, EditMedicationComponent],
+  imports: [HeaderComponent, EditMedicationComponent, ChatModalComponent],
   templateUrl: './view-medication.component.html',
   styleUrl: './view-medication.component.css',
 })
@@ -23,7 +24,7 @@ export class ViewMedicationComponent {
   addMeds = false;
   roleOfTheLoggedUser = signal<string>('No role');
 
-
+chatModalVisible = false;
 
   newMeds: Medication = {
     userId: 0,
@@ -99,7 +100,13 @@ export class ViewMedicationComponent {
       this.refreshMeds();
     });
   }
+openChat() {
+  this.chatModalVisible = true;
+}
 
+closeChat() {
+  this.chatModalVisible = false;
+}
   onSubmitEditMeds() {
     this.medicationService.upsertMedication(this.editingMeds).subscribe(
       () => {
