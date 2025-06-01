@@ -2,11 +2,9 @@ import { Component, computed, signal } from '@angular/core';
 import { PatientService } from '../services/pacient.service';
 import { Patient } from '../models/pacient.model';
 import { HeaderComponent } from '../header/header.component';
-import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { EditPacientComponent } from './edit-pacient/edit-pacient.component';
 import { ShowPatientsComponent } from './show-patients/show-patients.component';
-import { NavigationService } from '../app-routes/navigation.service';
 
 @Component({
   selector: 'app-pacient',
@@ -44,6 +42,7 @@ export class PacientComponent {
     doctorID: this.patientService.getUserIdFromToken(),
     ward: '',
     room: '',
+    doctorName: '',
   };
 
   constructor(protected patientService: PatientService) {}
@@ -72,6 +71,7 @@ export class PacientComponent {
           doctorID: this.patientService.getUserIdFromToken(),
           ward: '',
           room: '',
+          doctorName: ''
         };
       },
       error: (error) => {

@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, Observable, of } from 'rxjs';
 import { CustomTokenPayload, Patient, User } from '../models/pacient.model';
@@ -8,39 +8,22 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root',
 })
 export class PatientService {
-  private apiUrlGetAllActivePatients =
-    'https://aleznauerdtc2.azurewebsites.net/PatientComplete/GetPatients/{userid}/true';
 
-  private apiUrlUpsertPatient =
-    'https://aleznauerdtc2.azurewebsites.net/PatientComplete/UpsertPatient';
-
-  private apiUrlGetUsers =
-    'https://aleznauerdtc2.azurewebsites.net/Auth/GetAuthenticatedUsers';
-
-  private apiUrlGetUser =
-    'https://aleznauerdtc2.azurewebsites.net/Auth/GetUser/{userid}';
-
-  private apiUrlDeletePatient =
-    'https://aleznauerdtc2.azurewebsites.net/PatientComplete/PatientDelete/';
-
-  private apiAuthLogin = 'https://aleznauerdtc2.azurewebsites.net/Auth/Login';
-
-  private registerUrl = 'https://aleznauerdtc2.azurewebsites.net/Auth/Register';
-
-  private getPatient = 'https://aleznauerdtc2.azurewebsites.net/PatientComplete/GetPatient/{userid}'
+  private baseUrlPatientComplete = 'https://aleznauerdtc2.azurewebsites.net/PatientComplete/';
+  private baseUrlAuth =  'https://aleznauerdtc2.azurewebsites.net/Auth/';
 
   constructor(private http: HttpClient) {}
 
   getApiAuthLogin() {
-    return this.apiAuthLogin;
+    return this.baseUrlAuth + 'Login';
   }
 
   getApiAuthRegister() {
-    return this.registerUrl;
+    return this.baseUrlAuth + 'Register';
   }
 
   getPatientsByID(userId: string): Observable<Patient> {
-    const url = this.getPatient.replace('{userid}', userId);
+    const url = this.baseUrlPatientComplete + 'GetPatient/' + userId.toString();
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
@@ -48,11 +31,10 @@ export class PatientService {
     return this.http.get<Patient>(url, {
       headers,
     });
+  }
 
-  } 
-  
   getUserByID(userId: string): Observable<User> {
-    const url = this.apiUrlGetUser.replace('{userid}', userId);
+    const url = this.baseUrlAuth + 'GetUser/' + userId.toString();
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
@@ -62,8 +44,17 @@ export class PatientService {
     });
   }
 
+  getAllDoctors(): Observable<User[]> {
+    const url = this.baseUrlAuth + 'GetAuthenticatedUsers';
+    return this.http
+      .get<User[]>(url)
+      .pipe(
+        map((users) => users.filter((user) => user.roleWorker === 'Doctor'))
+      );
+  }
+
   getAllPatients(): Observable<Patient[]> {
-    const url = this.apiUrlGetAllActivePatients.replace('{userid}', '0');
+    const url = this.baseUrlPatientComplete + 'GetPatients/0/true'
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
@@ -74,19 +65,21 @@ export class PatientService {
   }
 
   upsertPatient(patient: Patient): Observable<void> {
+    const url = this.baseUrlPatientComplete + 'UpsertPatient';
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
-    return this.http.put<void>(this.apiUrlUpsertPatient, patient, { headers });
+    return this.http.put<void>(url, patient, { headers });
   }
 
   deletePatient(userId: number): Observable<void> {
+    const url = this.baseUrlPatientComplete + 'PatientDelete/' + userId.toString();
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
-    return this.http.delete<void>(`${this.apiUrlDeletePatient}/${userId}`, {
+    return this.http.delete<void>(url, {
       headers,
     });
   }
@@ -125,28 +118,29 @@ export class PatientService {
     return 0;
   }
 
-getUserIdLoggedInUserAndSetRole(): Observable<number | undefined> {
-  const userId = this.getUserIdFromToken();
-  if (!userId) {
-    console.error('No userId found in token');
-    return of(undefined);
-  }
-
-  return this.http.get<User[]>(this.apiUrlGetUsers).pipe(
-    map((users) => {
-      const foundUser = users.find((u) => u.userId === userId);
-      if (foundUser) {
-        localStorage.setItem('role', foundUser.roleWorker);
-        return foundUser.userId;
-      } else {
-        console.warn('User not found');
-        return undefined;
-      }
-    }),
-    catchError((err) => {
-      console.error('Failed to fetch users', err);
+  getUserIdLoggedInUserAndSetRole(): Observable<number | undefined> {
+    const url = this.baseUrlAuth + 'GetAuthenticatedUsers'
+    const userId = this.getUserIdFromToken();
+    if (!userId) {
+      console.error('No userId found in token');
       return of(undefined);
-    })
-  );
-}
+    }
+
+    return this.http.get<User[]>(url).pipe(
+      map((users) => {
+        const foundUser = users.find((u) => u.userId === userId);
+        if (foundUser) {
+          localStorage.setItem('role', foundUser.roleWorker);
+          return foundUser.userId;
+        } else {
+          console.warn('User not found');
+          return undefined;
+        }
+      }),
+      catchError((err) => {
+        console.error('Failed to fetch users', err);
+        return of(undefined);
+      })
+    );
+  }
 }

@@ -24,6 +24,11 @@ form {
   gap: 1rem;
 }
 
+.error {
+  color: red;
+  font-weight: 500;
+}
+
 label {
   display: flex;
   flex-direction: column;

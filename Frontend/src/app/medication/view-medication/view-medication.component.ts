@@ -44,6 +44,7 @@ export class ViewMedicationComponent {
     doctorID: this.patientService.getUserIdFromToken(),
     ward: '',
     room: '',
+    doctorName: ''
   };
 
   medications: Medication[] = [];
@@ -80,6 +81,7 @@ export class ViewMedicationComponent {
         doctorID: firstRow.doctorID,
         ward: firstRow.ward,
         room: firstRow.room,
+        doctorName: ''
       };
 
       this.medications = data

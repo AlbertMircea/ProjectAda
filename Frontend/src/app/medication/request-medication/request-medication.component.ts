@@ -90,16 +90,22 @@ export class RequestMedicationComponent implements OnInit {
   }
 
   denyRequest(request: MedicationRequest) {
-    this.requestService.deleteRequestMedication(request.requestId).subscribe({
-      next: () => {
-        console.log('Request Denied!');
-        this.refreshRequests();
-      },
-      error: (error) => {
-        console.error('Error deleting request:', error);
-        alert('Failed to deny request');
-      },
-    });
+    if (
+      confirm(
+        `Are you sure you want to deny request of ${request.medicationName} for ${request.patientName}?`
+      )
+    ) {
+      this.requestService.deleteRequestMedication(request.requestId).subscribe({
+        next: () => {
+          console.log('Request Denied!');
+          this.refreshRequests();
+        },
+        error: (error) => {
+          console.error('Error deleting request:', error);
+          alert('Failed to deny request');
+        },
+      });
+    }
   }
   getStatusColor(status: string): string {
     switch (status.toLowerCase()) {
@@ -115,7 +121,6 @@ export class RequestMedicationComponent implements OnInit {
   }
 
   approveRequest(request: MedicationRequest) {
-    console.log('Approving:', request);
     this.requestService
       .updateStatus(request.requestId, 'Transporting')
       .subscribe(() => {

@@ -2,7 +2,6 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
-import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { PatientService } from '../services/pacient.service';
 
@@ -26,7 +25,11 @@ export class RegisterComponent {
   gender = '';
   role = '';
 
-  constructor(private router: Router, private http: HttpClient, private service:PatientService) {}
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private service: PatientService
+  ) {}
 
   private httpClient = inject(HttpClient);
   private destroyRef = inject(DestroyRef);
@@ -36,6 +39,23 @@ export class RegisterComponent {
   }
 
   onSubmitRegister() {
+    if (this.password !== this.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    if (
+      !this.email ||
+      !this.password ||
+      !this.firstName ||
+      !this.lastName ||
+      !this.gender ||
+      !this.role
+    ) {
+      alert('Please fill out all required fields');
+      return;
+    }
+    this.isFetching.set(true);
     const patientData = {
       email: this.email,
       password: this.password,
@@ -46,26 +66,28 @@ export class RegisterComponent {
       roleWorker: this.role,
     };
     if (this.email != '' && this.password != '' && this.confirmPassword != '') {
-      this.httpClient.post(this.service.getApiAuthRegister(), patientData).subscribe({
-        next: (response) => {
-          this.isFetching.set(false);
-          localStorage.setItem('username', this.email);
-          localStorage.setItem('role', this.role);
-          console.log('Register successfully!');
-          this.success.set(true);
-          this.error.set('');
+      this.httpClient
+        .post(this.service.getApiAuthRegister(), patientData)
+        .subscribe({
+          next: (response) => {
+            this.isFetching.set(false);
+            localStorage.setItem('username', this.email);
+            localStorage.setItem('role', this.role);
+            console.log('Register successfully!');
+            this.success.set(true);
+            this.error.set('');
 
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 3000);
-        },
-        error: (error) => {
-          this.isFetching.set(false);
-          console.error('Register failed:', error);
-          this.error.set('User already created or server error.');
-          this.success.set(false);
-        },
-      });
+            setTimeout(() => {
+              this.router.navigate(['/login']);
+            }, 3000);
+          },
+          error: (error) => {
+            this.isFetching.set(false);
+            console.error('Register failed:', error);
+            this.error.set('User already created or server error.');
+            this.success.set(false);
+          },
+        });
     } else {
       if (this.email.trim() == '') this.error.set("The email can't be empty!");
       else if (this.password.trim() == '')

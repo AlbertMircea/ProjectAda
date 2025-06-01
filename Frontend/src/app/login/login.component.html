@@ -2,13 +2,17 @@
 <main>
   <div class="login-container">
     <h2>Login</h2>
-    @if (isFetching() && !error()) {
-    <p class="fallback-text">Fetching user...</p>
-    } @if (error()!='') {
-    <p class="fallback-text">{{ error() }}</p>
-    } @else if (success()) {
-    <p class="fallback-text">Login Successfully</p>
+    @if (isFetching() && !error()) 
+    {
+      <p class="fallback-text">Fetching user...</p>
+    } @if (error()!='') 
+    {
+      <p class="fallback-text">{{ error() }}</p>
+    } @else if (success()) 
+    {
+      <p class="fallback-text">Login Successfully</p>
     }
+    
     <form (ngSubmit)="login(email, password)">
       <label>
         Email:
