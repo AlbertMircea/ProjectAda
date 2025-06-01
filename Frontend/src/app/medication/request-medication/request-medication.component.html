@@ -22,16 +22,19 @@
         {{ request.status }}
       </span>
     </p>
-@if (role == 'Pharmacist') {
-    <div class="patient-actions">
-      @if (request.status !== 'Delivered') {
-      <button (click)="denyRequest(request)">Deny Request</button>
-      }
-      @if (request.status === 'Pending') {
-      <button (click)="approveRequest(request)">Send Transport</button>
+    @if (role == 'Pharmacist') 
+    {
+      <div class="patient-actions">
+      @if (request.status !== 'Delivered') 
+      {
+        <button (click)="denyRequest(request)">Deny Request</button>
+      } 
+      @if (request.status === 'Pending') 
+      {
+        <button (click)="approveRequest(request)">Send Transport</button>
       }
     </div>
-  }
+    }
   </div>
   }
 </div>

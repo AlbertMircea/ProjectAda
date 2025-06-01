@@ -2,26 +2,64 @@
 
 <div class="register-container">
   <h2>Create Account</h2>
-      @if (isFetching() && !error()) {
+  @if (isFetching() && !error()) 
+  {
     <p class="fallback-text">Registering user...</p>
-    } @if (error()!='') {
+  } 
+  @if (error()!='') 
+  {
     <p class="fallback-text">{{ error() }}</p>
-    } @else if (success()) {
+  }
+   @else if (success()) 
+  {
     <p class="fallback-text">Register Successfully</p>
-    }
-  <form (ngSubmit)="onSubmitRegister()" #registerForm="ngForm">
-    <label for="email">Email</label>
-    <input type="email" id="email" required [(ngModel)]="email" name="email" />
+  }
 
+  <form (ngSubmit)="onSubmitRegister()" #registerForm="ngForm">
+
+    <!-- Email -->
+    <label for="email">Email</label>
+    <input
+      type="email"
+      id="email"
+      required
+      email
+      [(ngModel)]="email"
+      name="email"
+      #emailField="ngModel"
+    />
+    
+    @if (emailField.touched && emailField.invalid) {
+    <div class="error">
+      @if (emailField.errors?.['required']) {
+      <small>Email is required.</small>
+      } @else if (emailField.errors?.['email']) {
+      <small>Enter a valid email address.</small>
+      }
+    </div>
+    }
+
+    <!-- Password -->
     <label for="password">Password</label>
     <input
       type="password"
       id="password"
       required
+      minlength="4"
       [(ngModel)]="password"
       name="password"
+      #passwordField="ngModel"
     />
+    @if (passwordField.touched && passwordField.invalid) {
+    <div class="error">
+      @if (passwordField.errors?.['required'] ||
+      passwordField.errors?.['minlength']) {
+      <small> Password must be at least 4 characters long. </small>
+      }
+    </div>
+    }
 
+    <!-- Confirm Password -->
     <label for="confirmPassword">Confirm Password</label>
     <input
       type="password"
@@ -29,43 +67,93 @@
       required
       [(ngModel)]="confirmPassword"
       name="confirmPassword"
+      #confirmPasswordField="ngModel"
     />
+    @if (confirmPasswordField.touched && password !== confirmPassword) {
+    <div class="error">
+      <small>Passwords do not match.</small>
+    </div>
+    }
+
+    <!-- First Name -->
     <label for="firstName">First Name</label>
     <input
       id="firstName"
       required
       [(ngModel)]="firstName"
       name="firstName"
+      #firstNameField="ngModel"
     />
+    @if (firstNameField.touched && firstNameField.invalid) {
+    <div class="error">
+      <small>First name is required.</small>
+    </div>
+    }
 
+    <!-- Last Name -->
     <label for="lastName">Last Name</label>
     <input
       id="lastName"
       required
       [(ngModel)]="lastName"
       name="lastName"
+      #lastNameField="ngModel"
     />
-
-    <label for="gender">Gender</label>
-      <select id="gender" [(ngModel)]="gender" name="gender" required>
-        <option value="" disabled selected>Select Gender</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-        <option value="Other">Other</option>
-      </select>
-    <div class="form-group">
-      <label for="role">Role</label>
-      <select id="role" [(ngModel)]="role" name="role" required>
-        <option value="" disabled selected>Select a role</option>
-        <option value="Doctor">Doctor</option>
-        <option value="Nurse">Nurse</option>
-        <option value="Pharmacist">Pharmacist</option>
-      </select>
+    @if (lastNameField.touched && lastNameField.invalid) {
+    <div class="error">
+      <small>Last name is required.</small>
     </div>
+    }
 
+    <!-- Gender -->
+    <label for="gender">Gender</label>
+    <select
+      id="gender"
+      [(ngModel)]="gender"
+      name="gender"
+      required
+      #genderField="ngModel"
+    >
+      <option value="" disabled>Select Gender</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Other">Other</option>
+    </select>
+    @if (genderField.touched && genderField.invalid) {
+    <div class="error">
+      <small>Gender is required.</small>
+    </div>
+    }
+
+    <!-- Role -->
+    <label for="role">Role</label>
+    <select
+      id="role"
+      [(ngModel)]="role"
+      name="role"
+      required
+      #roleField="ngModel"
+    >
+      <option value="" disabled>Select a role</option>
+      <option value="Doctor">Doctor</option>
+      <option value="Nurse">Nurse</option>
+      <option value="Pharmacist">Pharmacist</option>
+    </select>
+    @if (roleField.touched && roleField.invalid) {
+    <div class="error">
+      <small>Role is required.</small>
+    </div>
+    }
+
+    <!-- Submit -->
     <div class="actions">
       <button type="button" (click)="onCancel()">Cancel</button>
-      <button type="submit">Create</button>
+      <button
+        type="submit"
+        [disabled]="registerForm.invalid || password !== confirmPassword"
+      >
+        Create
+      </button>
     </div>
   </form>
 </div>

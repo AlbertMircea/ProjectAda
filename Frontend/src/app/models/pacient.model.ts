@@ -8,6 +8,7 @@ export interface Patient {
   doctorID: number;
   ward: string;
   room: string;
+  doctorName : string;
 }
 
 export interface CustomTokenPayload {

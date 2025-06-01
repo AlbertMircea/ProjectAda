@@ -58,6 +58,7 @@
   (close)="onCloseEditMeds()"
   (submit)="onSubmitEditMeds()"
   [newMedication]="editingMeds"
+  titleText="Edit Medication"
 >
 </app-edit-medication>
 } @if (addMeds) {
@@ -66,6 +67,7 @@
   (close)="onCloseAddMeds()"
   (submit)="onSubmitAddMeds()"
   [newMedication]="newMeds"
+  titleText="Add Medication"
 >
 </app-edit-medication>
 }
