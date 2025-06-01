@@ -175,12 +175,9 @@ export class ViewMedicationComponent {
         const hasRealMedications = this.medications.some(
           (med) => med.medication !== ''
         );
-
         this.listEmpty.set(hasRealMedications);
         this.refreshMeds();
-
         this.loadPatientWithMedications();
-        console.log(this.listEmpty);
       },
       (error) => {
         console.error('Failed to inserted medication', error);
