@@ -38,19 +38,24 @@ export class RequestMedicationComponent implements OnInit {
     this.refreshRequests();
   }
 
-  refreshRequests() {
-    this.requestService.getAllMedicationRequests().subscribe((data) => {
-      this.requests = data.map((r) => ({
+refreshRequests() {
+  this.requestService.getAllMedicationRequests().subscribe((data) => {
+    this.requests = data
+      .map((r) => ({
         ...r,
         requestedAt: new Date(r.requestedAt),
-      }));
-      this.refreshRequests();
-    });
+      }))
+      .sort((a, b) => {
+        // Move 'Delivered' to the bottom
+        if (a.status === 'Delivered' && b.status !== 'Delivered') return 1;
+        if (a.status !== 'Delivered' && b.status === 'Delivered') return -1;
+        return 0;
+      });
 
+            this.refreshRequests();
+    // Populate display names
     this.requests.forEach((request) => {
-      if (this.patientMap.has(request.patientId)) {
-        request.patientName = this.patientMap.get(request.patientId)!;
-      } else {
+      if (!this.patientMap.has(request.patientId)) {
         this.patientService
           .getPatientsByID(request.patientId.toString())
           .subscribe((patient) => {
@@ -58,11 +63,11 @@ export class RequestMedicationComponent implements OnInit {
             this.patientMap.set(request.patientId, fullName);
             request.patientName = fullName;
           });
+      } else {
+        request.patientName = this.patientMap.get(request.patientId)!;
       }
 
-      if (this.nurseMap.has(request.nurseId)) {
-        request.nurseName = this.nurseMap.get(request.nurseId)!;
-      } else {
+      if (!this.nurseMap.has(request.nurseId)) {
         this.patientService
           .getUserByID(request.nurseId.toString())
           .subscribe((user) => {
@@ -70,11 +75,11 @@ export class RequestMedicationComponent implements OnInit {
             this.nurseMap.set(request.nurseId, fullName);
             request.nurseName = fullName;
           });
+      } else {
+        request.nurseName = this.nurseMap.get(request.nurseId)!;
       }
 
-      if (this.medicationMap.has(request.medicationId)) {
-        request.medicationName = this.medicationMap.get(request.medicationId)!;
-      } else {
+      if (!this.medicationMap.has(request.medicationId)) {
         this.medicationService
           .getPatientByMedicationId(request.medicationId.toString())
           .subscribe((prescriptionArr) => {
@@ -85,9 +90,13 @@ export class RequestMedicationComponent implements OnInit {
               request.medicationName = medName;
             }
           });
+      } else {
+        request.medicationName = this.medicationMap.get(request.medicationId)!;
       }
     });
-  }
+  });
+}
+
 
   denyRequest(request: MedicationRequest) {
     if (
