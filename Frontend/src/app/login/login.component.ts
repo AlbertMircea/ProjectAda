@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { PatientService } from '../services/pacient.service';
 
@@ -59,9 +58,17 @@ export class LoginComponent {
         },
         error: (error) => {
           this.isFetching.set(false);
-          console.error('Login failed:', error);
-          this.error.set('Invalid credentials or server error.');
+
+          if (error.status === 401) {
+            this.error.set(error.error || 'Unauthorized: Incorrect password.');
+          } else {
+            this.error.set(
+              'Login failed: User not found or server error ( no access )'
+            );
+          }
+
           this.success.set(false);
+          console.error('Login failed:', error);
         },
       });
   }

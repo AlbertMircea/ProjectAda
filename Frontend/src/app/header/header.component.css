@@ -28,14 +28,13 @@
 }
 
 .header-center {
-
   left: 50%;
-  transform: translateX(-50%);
+ 
 }
 
 .header-center img {
-  height: 100px;
-  transform: translateX(20%);
+  height: 115px;
+
 }
 
 .back-button {

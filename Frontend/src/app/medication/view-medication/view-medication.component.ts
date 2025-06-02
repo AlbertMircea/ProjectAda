@@ -6,11 +6,12 @@ import { MedicationService } from '../../services/medication.service';
 import { PatientService } from '../../services/pacient.service';
 import { HeaderComponent } from '../../header/header.component';
 import { EditMedicationComponent } from '../edit-medication/edit-medication.component';
+import { ChatModalComponent } from '../chat-modal/chat-modal.component';
 
 @Component({
   selector: 'app-view-medication',
   standalone: true,
-  imports: [HeaderComponent, EditMedicationComponent],
+  imports: [HeaderComponent, EditMedicationComponent, ChatModalComponent],
   templateUrl: './view-medication.component.html',
   styleUrl: './view-medication.component.css',
 })
@@ -23,7 +24,7 @@ export class ViewMedicationComponent {
   addMeds = false;
   roleOfTheLoggedUser = signal<string>('No role');
 
-
+  chatModalVisible = false;
 
   newMeds: Medication = {
     userId: 0,
@@ -43,6 +44,7 @@ export class ViewMedicationComponent {
     doctorID: this.patientService.getUserIdFromToken(),
     ward: '',
     room: '',
+    doctorName: ''
   };
 
   medications: Medication[] = [];
@@ -59,7 +61,6 @@ export class ViewMedicationComponent {
     this.loadPatientWithMedications();
     this.roleOfTheLoggedUser.set(localStorage.getItem('role') ?? 'No role');
   }
-
 
   loadPatientWithMedications() {
     this.medicationService.getPatientComplete(this.userId).subscribe((data) => {
@@ -80,6 +81,7 @@ export class ViewMedicationComponent {
         doctorID: firstRow.doctorID,
         ward: firstRow.ward,
         room: firstRow.room,
+        doctorName: ''
       };
 
       this.medications = data
@@ -99,7 +101,13 @@ export class ViewMedicationComponent {
       this.refreshMeds();
     });
   }
+  openChat() {
+    this.chatModalVisible = true;
+  }
 
+  closeChat() {
+    this.chatModalVisible = false;
+  }
   onSubmitEditMeds() {
     this.medicationService.upsertMedication(this.editingMeds).subscribe(
       () => {
@@ -128,11 +136,11 @@ export class ViewMedicationComponent {
             quantity: row.quantity,
           }));
       });
-            const hasRealMedications = this.medications.some(
-        (med) => med.medication !== ''
-      );
+    const hasRealMedications = this.medications.some(
+      (med) => med.medication !== ''
+    );
 
-      this.listEmpty.set(hasRealMedications);
+    this.listEmpty.set(hasRealMedications);
   }
 
   editMedication(med: any) {
@@ -147,6 +155,13 @@ export class ViewMedicationComponent {
     this.confirmDelete(med);
   }
   addMedication() {
+    this.newMeds = {
+      userId: 0,
+      medicationId: 0,
+      medication: '',
+      dosage: '',
+      quantity: 0,
+    };
     this.addMeds = true;
   }
   onCloseAddMeds() {
@@ -158,11 +173,11 @@ export class ViewMedicationComponent {
       () => {
         console.log('Medication inserted successfully');
         const hasRealMedications = this.medications.some(
-        (med) => med.medication !== ''
-      );
-
-      this.listEmpty.set(hasRealMedications);
+          (med) => med.medication !== ''
+        );
+        this.listEmpty.set(hasRealMedications);
         this.refreshMeds();
+        this.loadPatientWithMedications();
       },
       (error) => {
         console.error('Failed to inserted medication', error);

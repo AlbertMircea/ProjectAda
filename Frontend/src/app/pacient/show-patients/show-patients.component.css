@@ -1,5 +1,5 @@
 .patient-card {
-  position: relative; /* 👈 Needed for close icon */
+  position: relative; 
   background-color: rgba(255, 255, 255, 0.05);
   padding: 1rem;
   border-radius: 1rem;
@@ -10,7 +10,13 @@
   justify-content: space-between;
   margin: 1rem;
   color: #fff;
-  overflow: hidden; /* optional, in case the modal causes any overlap issues */
+  overflow: hidden;
+}
+.no-patients-message {
+  font-style: italic;
+  color: rgb(255, 255, 255);
+  padding: 1rem;
+  text-align: center;
 }
 
 .patient-actions button {
@@ -30,7 +36,7 @@
   color: #e74c3c;
   font-weight: bold;
   line-height: 1;
-  z-index: 10; /* 👈 ensures the X is above the card content */
+  z-index: 10;
 }
 
 .close-icon:hover {

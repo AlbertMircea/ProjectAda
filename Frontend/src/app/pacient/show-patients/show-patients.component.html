@@ -1,4 +1,7 @@
 <div class="patient-list">
+  @if (patients.length === 0) {
+  <p class="no-patients-message">No patients for the current doctor.</p>
+}
   @for (patient of patients; track patient.userId) {
   <div class="patient-card">
     @if(roleOfTheLoggedUser() == 'Doctor'){ @if (!isEditingOrAdding(patient)) {
@@ -7,7 +10,7 @@
     <h2>{{ patient.firstName }} {{ patient.lastName }}</h2>
     <p><strong>Email:</strong> {{ patient.email }}</p>
     <p><strong>Gender:</strong> {{ patient.gender }}</p>
-    <p><strong>Doctor ID:</strong> {{ patient.doctorID }}</p>
+    <p><strong>Doctor:</strong> {{ patient.doctorName || "Loading..."}}</p>
     <p><strong>Ward:</strong> {{ patient.ward }}</p>
     <p><strong>Room:</strong> {{ patient.room }}</p>
     <p>

@@ -1,12 +1,18 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  signal,
+  SimpleChanges,
+} from '@angular/core';
 import { Patient } from '../../models/pacient.model';
 import { FormsModule } from '@angular/forms';
 import { EditPacientComponent } from '../edit-pacient/edit-pacient.component';
 import { PatientService } from '../../services/pacient.service';
 import { Router } from '@angular/router';
-import { filter } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
-
 
 @Component({
   selector: 'app-show-patients',
@@ -15,11 +21,12 @@ import { NotificationService } from '../../services/notification.service';
   templateUrl: './show-patients.component.html',
   styleUrl: './show-patients.component.css',
 })
-export class ShowPatientsComponent {
+export class ShowPatientsComponent implements OnChanges {
   @Input() patients!: Patient[];
   @Output() editSuccessfully = new EventEmitter<void>();
   @Output() deleteSuccessfully = new EventEmitter<void>();
 
+  doctorMap = new Map<number, string>();
   roleOfTheLoggedUser = signal<string>('No role');
 
   editingPatient: any = null;
@@ -34,9 +41,28 @@ export class ShowPatientsComponent {
   ngOnInit(): void {
     this.roleOfTheLoggedUser.set(localStorage.getItem('role') ?? 'No role');
     this.notifyService.notify('Update', 'Testing the notification!');
-  
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['patients'] && this.patients && this.patients.length > 0) {
+      this.setPatientsDoctorsName();
+    }
   }
 
+  setPatientsDoctorsName() {
+    this.patients.forEach((patient) => {
+      if (this.doctorMap.has(patient.doctorID)) {
+        patient.doctorName = this.doctorMap.get(patient.doctorID)!;
+      } else {
+        this.patientService
+          .getUserByID(patient.doctorID.toString())
+          .subscribe((user) => {
+            const fullName = `${user.firstName} ${user.lastName}`;
+            this.doctorMap.set(patient.doctorID, fullName);
+            patient.doctorName = fullName;
+          });
+      }
+    });
+  }
   startEditPatient(patient: any) {
     this.editingPatient = { ...patient };
   }
@@ -53,7 +79,7 @@ export class ShowPatientsComponent {
         ) as HTMLElement;
         if (container) {
           container.style.display = 'none';
-          container.offsetHeight; // trigger reflow to force reorganize the rows
+          container.offsetHeight; 
           container.style.display = 'flex';
         }
       },

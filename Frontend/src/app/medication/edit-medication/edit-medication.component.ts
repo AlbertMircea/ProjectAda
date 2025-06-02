@@ -13,6 +13,7 @@ import { Medication } from '../../models/medication.model';
 })
 export class EditMedicationComponent {
   @Input() newMedication!: Medication;
+  @Input() titleText!: string;
   @Output() close = new EventEmitter<void>();
   @Output() submit = new EventEmitter<void>();
   constructor(protected patientService: PatientService, protected medicationService: MedicationService) {}

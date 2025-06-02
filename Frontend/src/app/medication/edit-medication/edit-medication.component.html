@@ -1,31 +1,61 @@
 <div class="backdrop" (click)="onCancel()"></div>
 <dialog open>
   <div class="form-group">
-    <h2>Edit Prescription</h2>
+    <h2>{{ titleText }}</h2>
   </div>
-  <form (ngSubmit)="onSubmitMedication()">
+
+  <form (ngSubmit)="onSubmitMedication()" #medForm="ngForm">
     <div class="form-group">
-      <div class="form-group">
-        <label
-          >Medication Name:
-          <input [(ngModel)]="newMedication.medication" name="medicationName" />
-        </label>
-      </div>
-      <div class="form-group">
-        <label
-          >Dosage: <input [(ngModel)]="newMedication.dosage" name="dosage" />
-        </label>
-      </div>
-      <div class="form-group">
-        <label
-          >Quantity:
-          <input [(ngModel)]="newMedication.quantity" name="quantity" />
-        </label>
-      </div>
-      <div class="actions">
-        <button type="button" (click)="onCancel()">Cancel</button>
-        <button type="submit">Modify</button>
-      </div>
+      <label>
+        Medication Name:
+        <input
+          [(ngModel)]="newMedication.medication"
+          name="medicationName"
+          required
+          #medicationName="ngModel"
+        />
+      </label>
+      @if (medicationName.invalid && medicationName.touched) {
+      <p class="error">Medication name is required.</p>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>
+        Dosage:
+        <input
+          [(ngModel)]="newMedication.dosage"
+          name="dosage"
+          required
+          min="1"
+          #dosage="ngModel"
+        />
+      </label>
+      @if (dosage.invalid && dosage.touched) {
+      <p class="error">Dosage is required.</p>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>
+        Quantity:
+        <input
+          type="number"
+          [(ngModel)]="newMedication.quantity"
+          name="quantity"
+          required
+          min="1"
+          #quantity="ngModel"
+        />
+      </label>
+      @if (quantity.invalid && quantity.touched) {
+      <p class="error">Quantity must be a positive number.</p>
+      }
+    </div>
+
+    <div class="actions">
+      <button type="button" (click)="onCancel()">Cancel</button>
+      <button type="submit" [disabled]="medForm.invalid">Done</button>
     </div>
   </form>
 </dialog>

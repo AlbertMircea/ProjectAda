@@ -1,4 +1,6 @@
 
+CREATE SCHEMA TutorialAppSchema;
+GO
 
 CREATE TABLE TutorialAppSchema.Patients
 (
@@ -177,9 +179,6 @@ BEGIN
 END;
 GO
 
-DROP TABLE TutorialAppSchema.Auth
-
-
 CREATE TABLE TutorialAppSchema.Auth(
     UserId INT IDENTITY(1, 1) UNIQUE,
 	Email NVARCHAR(50) PRIMARY KEY,
@@ -244,6 +243,98 @@ BEGIN
 END
 GO
 
-SELECT * FROM TutorialAppSchema.Auth
-SELECT * FROM TutorialAppSchema.Patients
-SELECT * FROM TutorialAppSchema.Medication
+CREATE OR ALTER PROCEDURE TutorialAppSchema.spMedication_GetByUserId
+/*EXEC TutorialAppSchema.spMedication_GetByUserId @UserId=1*/
+    @UserId INT = NULL
+AS
+BEGIN
+
+    SELECT *
+    FROM TutorialAppSchema.Medication AS Medication 
+        WHERE Medication.UserId = ISNULL(@UserId, Medication.UserId)
+END
+GO
+
+CREATE OR ALTER PROCEDURE TutorialAppSchema.spMedication_GetByMedicationId
+/*EXEC TutorialAppSchema.spMedication_GetByMedicationId @MedicationId=5*/
+    @MedicationId INT = NULL
+AS
+BEGIN
+
+    SELECT *
+    FROM TutorialAppSchema.Medication AS Medication 
+        WHERE Medication.MedicationId = ISNULL(@MedicationId, Medication.MedicationId)
+END
+GO
+
+CREATE TABLE TutorialAppSchema.MedicationRequest (
+    RequestId INT PRIMARY KEY IDENTITY(1,1),
+    PatientId INT,
+    NurseId INT,
+    MedicationId INT,
+    Quantity INT,
+    RequestedAt DATETIME DEFAULT GETDATE(),
+    Status VARCHAR(50), -- 'Pending', 'Approved', etc.
+);
+GO
+
+
+CREATE OR ALTER PROCEDURE TutorialAppSchema.spMedicationRequest_Upsert
+    @RequestId INT = NULL,
+    @PatientId INT,
+    @NurseId INT,
+    @MedicationId INT,
+    @Quantity INT,
+    @Status VARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM TutorialAppSchema.MedicationRequest
+        WHERE RequestId = @RequestId
+    )
+    BEGIN
+        INSERT INTO TutorialAppSchema.MedicationRequest (
+            PatientId,
+            NurseId,
+            MedicationId,
+            Quantity,
+            RequestedAt,
+            Status
+        )
+        VALUES (
+            @PatientId,
+            @NurseId,
+            @MedicationId,
+            @Quantity,
+            GETDATE(),
+            @Status
+        )
+    END
+    ELSE
+    BEGIN
+        UPDATE TutorialAppSchema.MedicationRequest
+        SET
+            PatientId = @PatientId,
+            NurseId = @NurseId,
+            MedicationId = @MedicationId,
+            Quantity = @Quantity,
+            Status = @Status
+        WHERE RequestId = @RequestId
+    END
+END
+
+GO
+
+CREATE OR ALTER PROCEDURE TutorialAppSchema.spMedicationRequest_Delete
+    @RequestId INT
+AS
+BEGIN
+
+    DELETE  FROM TutorialAppSchema.MedicationRequest
+     WHERE  MedicationRequest.RequestId = @RequestId;
+END;
+GO
+

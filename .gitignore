@@ -57,3 +57,68 @@ Frontend/typings
 # System files
 Frontend/.DS_Store
 Frontend/Thumbs.db
+
+# Build outputs
+build/
+.android/
+.ios/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.dart_tool/
+.melos_tool/
+
+# IntelliJ related
+*.iml
+.idea/
+*.ipr
+*.iws
+
+# VS Code related
+.vscode/
+
+# macOS
+macos/Flutter/ephemeral/
+macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Windows
+windows/flutter/ephemeral/
+
+# Web
+web/.dart_tool/
+web/build/
+
+# Linux
+linux/flutter/ephemeral/
+
+# Generated pub files
+pubspec.lock
+
+# Dart tool artifacts
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Device-specific
+*.log
+
+# Android specific
+android/.gradle/
+android/captures/
+android/local.properties
+android/.idea/
+
+# Xcode specific
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/Runner.xcworkspace/
+ios/Pods/
+ios/.symlinks/
+ios/.generated/
+
+# Others
+*.DS_Store
+*.lock
+*.tmp
+*.swp
+*.swo

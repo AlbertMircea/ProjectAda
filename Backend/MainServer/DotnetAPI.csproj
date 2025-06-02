@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <PackageReference Include="automapper" Version="14.0.0" />
+    <PackageReference Include="Azure.AI.Inference" Version="1.0.0-beta.5" />
+    <PackageReference Include="Azure.Core" Version="1.46.1" />
     <PackageReference Include="dapper" Version="2.1.66" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
