@@ -1,8 +1,10 @@
 import 'package:albort_bot/Models/medication_request.dart';
 import 'package:albort_bot/Models/patient_complete.dart';
+import 'package:albort_bot/Providers/patient_provider.dart';
 import 'package:albort_bot/Services/auth_service.dart';
 import 'package:albort_bot/Services/patient_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PatientsScreen extends StatefulWidget {
   const PatientsScreen({super.key});
@@ -35,23 +37,29 @@ class PatientsScreenState extends State<PatientsScreen> {
   
   
   void _loadPatients() async {
-    try {
-      final allpatients = await fetchPatients();
-      if (!mounted) return; 
-      setState(() {
-        _patients = allpatients;
-         _filteredPatients = _patients;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-      });
-    } finally {
-      setState(() {
-        _loading = false;
-      });
-    }
+  setState(() {
+    _loading = true;
+    _error = null;
+  });
+
+  try {
+    List<PatientComplete> patients = await fetchPatients();
+    final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+    patientProvider.setPatientsComplete(patients);
+
+    setState(() {
+      _patients = patients;
+      _filteredPatients = patients;
+      _loading = false;
+    });
+  } catch (e) {
+    setState(() {
+      _error = "Failed to load patients";
+      _loading = false;
+    });
   }
+}
+
 
   void _loadNurseId() async {
     final id = await getUserIdFromToken();
@@ -65,7 +73,7 @@ class PatientsScreenState extends State<PatientsScreen> {
   void _filterByUserId(String userId) {
   setState(() {
     if (userId.isEmpty) {
-      _filteredPatients = _patients; // dacă nu se introduce nimic, arată toți
+      _filteredPatients = _patients; 
     } else {
       _filteredPatients = _patients.where((p) => p.patient.userId.toString() == userId).toList();
     }
@@ -173,6 +181,8 @@ class PatientsScreenState extends State<PatientsScreen> {
                 Text("Patient ID: ${patientComplete.patient.userId}"),
                 Text("Nurse ID: $_nurseId"),
                 Text("Status: Pending"),
+                Text("Ward: ${patientComplete.patient.ward}"),
+                Text("Room: ${patientComplete.patient.room}")
               ],
             ),
           ),
@@ -198,16 +208,15 @@ class PatientsScreenState extends State<PatientsScreen> {
                   );
                   return;
                 }
-
+                final ward = patientComplete.patient.ward;
                 final request = MedicationRequest(
                   patientId: patientComplete.patient.userId,
                   nurseId: _nurseId!,
                   medicationId: medId,
                   quantity: qty,
                 );
-
                 try {
-                  await sendMedicationRequest(request);
+                  await sendMedicationRequest(request,ward);
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Request sent succesfully.")),

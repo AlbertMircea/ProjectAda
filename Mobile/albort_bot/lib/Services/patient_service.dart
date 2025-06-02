@@ -30,7 +30,6 @@ Future<List<PatientComplete>> fetchPatients() async {
   final List<dynamic> patientJsonList = json.decode(response.body);
   final List<Patient> patientsList = patientJsonList.map((json) => Patient.fromJson(json)).toList();
 
-  // ⚡ Apelăm în paralel toate requesturile pentru medicamente
   final List<Future<PatientComplete>> futures = patientsList.map((pt) async {
     final prescriptionUrl = Uri.parse('https://aleznauerdtc2.azurewebsites.net/Prescription/GetMedicationByUserId/${pt.userId}');
     
@@ -53,7 +52,6 @@ Future<List<PatientComplete>> fetchPatients() async {
     }
   }).toList();
 
-  // 🔄 Așteptăm să se termine TOATE requesturile în paralel
   final List<PatientComplete> fullPatients = await Future.wait(futures);
 
   return fullPatients;
@@ -65,19 +63,34 @@ Future<PatientComplete> fetchPatientById(int userId) async {
   if (token == null) {
     throw Exception('Missing auth token');
   }
-
-  final url = Uri.parse('https://aleznauerdtc2.azurewebsites.net/PatientComplete/GetPatientByUserId/$userId');
+  final url = Uri.parse('https://aleznauerdtc2.azurewebsites.net/PatientComplete/GetPatient//$userId');
   final response = await http.get(url, headers: {'Authorization': 'Bearer $token'});
-
   if (response.statusCode == 200) {
     final data = json.decode(response.body);
     return PatientComplete.fromJson(data);
   } else {
-    throw Exception('Failed to load patient');
+    throw Exception('Failed to load patient ${response.statusCode}');
   }
 }
 
-Future<void> sendMedicationRequest(MedicationRequest request) async {
+Future<Prescription> getMedicationById(int medicationId) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('authToken'); 
+
+  if (token == null || token.isEmpty) {
+    throw Exception('Authentication token not found.');
+  }
+  final url = Uri.parse('https://aleznauerdtc2.azurewebsites.net/Prescription/GetMedication/$medicationId');
+  final response = await http.get(url, headers: {'Authorization': 'Bearer $token'});
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    return Prescription.fromJson(data);
+  } else {
+    throw Exception('Failed to load patient ${response.statusCode}');
+  }
+}
+
+Future<void> sendMedicationRequest(MedicationRequest request, String ward) async {
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('authToken'); 
 
@@ -85,16 +98,34 @@ Future<void> sendMedicationRequest(MedicationRequest request) async {
     throw Exception('Authentication token not found.');
   }
 
-  final response = await http.put(
-    Uri.parse('https://aleznauerdtc2.azurewebsites.net/Prescription/UpsertMedicationRequest'),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token', 
-    },
-    body: jsonEncode(request.toJson()),
-  );
-
-  if (response.statusCode != 200) {
+  if(ward=="Emergency"){
+     
+     final response = await http.post(
+      Uri.parse('https://aleznauer-ward-emergency2.azurewebsites.net/WardSync/request-medication'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', 
+      },
+      body: jsonEncode(request.toJson()),
+    );
+    
+    if (response.statusCode != 200) {
     throw Exception('Failed to send medication request: ${response.body}');
+    }
+  }
+  else if(ward=="General Medicine"){
+    
+    final response = await http.post(
+      Uri.parse('https://aleznauer-ward-general2.azurewebsites.net/WardSync/push-medication'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', 
+      },
+      body: jsonEncode(request.toJson()),
+    );
+   
+    if (response.statusCode != 200) {
+    throw Exception('Failed to send medication request: ${response.body}');
+    }
   }
 }

@@ -1,13 +1,19 @@
+import 'package:albort_bot/Providers/patient_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'Screens/login_screen.dart';
 import 'Screens/home_screen.dart';
 import 'Screens/patient_screen.dart';
 import 'Screens/track_order_screen.dart';
 
-// importă și celelalte screens dacă există
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => PatientProvider()),
+      ],
+      child: MyApp()),
+  );
 }
 
 class MyApp extends StatelessWidget {
