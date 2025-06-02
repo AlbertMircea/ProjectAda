@@ -66,13 +66,21 @@ Start the application:
 Ensure Virtualization is Enabled: go into your BIOS/UEFI and enable:SVM Mode (for AMD) or VT-x (for Intel)/IOMMU if available (for AMD)
 
 Locate or Install cmdline-tools
+
    If it's missing, here's how to install it manually:
+   
    Option A: Using Android Studio
+   
    Open Android Studio.
+   
    Go to Settings > Appearance & Behavior > System Settings > Android SDK.
+   
    In the SDK Tools tab:
+   
    Make sure "Android SDK Command-line Tools (latest)" is checked.
+   
    Click Apply and wait for it to finish.
+   
    
 5. **BackEnd**
 
