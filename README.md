@@ -32,9 +32,11 @@ This project is a full-stack web application designed to streamline and digitali
 
 ## Installation Instructions
 
-To run the application, you first need to install Node.Js
+To run the application, you first need to install Node.js
 
-Don't forget to update the path to npm and nodejs in the env variables, if your sistem doesn't recognize the command npm.
+Don't forget to update the path to npm and Node.js in the environment variables if your system doesn't recognize the 'npm' command.
+
+To run the mobile application, you need to install Android Studio and follow the instructions steps here https://docs.flutter.dev/get-started/install/windows/mobile
 
 1. **Clone the repository**
    ```bash
@@ -57,7 +59,12 @@ Start the application:
    npm start
   ```
 
-3. **BackEnd**
+
+3. **Mobile**
+   
+-- to do
+   
+5. **BackEnd**
 
 
 Servers are UP and Running on Azure:
