@@ -58,67 +58,58 @@ Frontend/typings
 Frontend/.DS_Store
 Frontend/Thumbs.db
 
-# Build outputs
+# Flutter build outputs
 build/
-.android/
-.ios/
+.dart_tool/
+.packages
 .flutter-plugins
 .flutter-plugins-dependencies
-.packages
-.dart_tool/
 .melos_tool/
 
-# IntelliJ related
-*.iml
-.idea/
-*.ipr
-*.iws
-
-# VS Code related
-.vscode/
-
-# macOS
-macos/Flutter/ephemeral/
-macos/Flutter/GeneratedPluginRegistrant.swift
-
-# Windows
-windows/flutter/ephemeral/
-
-# Web
-web/.dart_tool/
-web/build/
-
-# Linux
-linux/flutter/ephemeral/
-
-# Generated pub files
-pubspec.lock
-
-# Dart tool artifacts
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-
-# Device-specific
-*.log
-
-# Android specific
+# Android
 android/.gradle/
 android/captures/
 android/local.properties
 android/.idea/
 
-# Xcode specific
-ios/Flutter/Generated.xcconfig
-ios/Flutter/ephemeral/
-ios/Runner.xcworkspace/
+# iOS
 ios/Pods/
-ios/.symlinks/
 ios/.generated/
+ios/.symlinks/
+ios/Flutter/ephemeral/
+ios/Flutter/Generated.xcconfig
+ios/Runner.xcworkspace/
 
-# Others
-*.DS_Store
-*.lock
+# macOS
+macos/Flutter/ephemeral/
+macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Linux
+linux/flutter/ephemeral/
+linux/flutter/generated_plugin_registrant.cc
+
+# Windows
+windows/flutter/ephemeral/
+windows/flutter/generated_plugin_registrant.cc
+
+# Web
+web/.dart_tool/
+web/build/
+
+# Editor / IDE
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Miscellaneous
+*.log
 *.tmp
 *.swp
 *.swo
+
