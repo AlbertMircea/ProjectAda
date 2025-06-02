@@ -38,6 +38,7 @@ Don't forget to update the path to npm and Node.js in the environment variables 
 
 To run the mobile application, you need to install Android Studio and follow the instructions steps here https://docs.flutter.dev/get-started/install/windows/mobile
 
+
 1. **Clone the repository**
    ```bash
    git clone https://github.com/AlbertMircea/ProjectAda.git
@@ -62,7 +63,16 @@ Start the application:
 
 3. **Mobile**
    
--- to do
+Ensure Virtualization is Enabled: go into your BIOS/UEFI and enable:SVM Mode (for AMD) or VT-x (for Intel)/IOMMU if available (for AMD)
+
+Locate or Install cmdline-tools
+   If it's missing, here's how to install it manually:
+   Option A: Using Android Studio
+   Open Android Studio.
+   Go to Settings > Appearance & Behavior > System Settings > Android SDK.
+   In the SDK Tools tab:
+   Make sure "Android SDK Command-line Tools (latest)" is checked.
+   Click Apply and wait for it to finish.
    
 5. **BackEnd**
 
