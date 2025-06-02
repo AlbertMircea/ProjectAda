@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/patient_screen.dart';
+import 'Screens/login_screen.dart';
+import 'Screens/home_screen.dart';
+import 'Screens/patient_screen.dart';
+import 'Screens/track_order_screen.dart';
 
 // importă și celelalte screens dacă există
 
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
         '/patients': (context) => PatientsScreen(),
-        '/trackOrder': (context) => PlaceholderScreen(title: 'Track Order'),
+        '/trackOrder': (context) => TrackOrderScreen(),
         '/requestMedicine': (context) => PlaceholderScreen(title: 'Request Medicine'),
       },
     );

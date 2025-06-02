@@ -24,24 +24,21 @@ Future<String?> getRoleWorkerOfLoggedInUser() async {
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('authToken');
   final userId = await getUserIdFromToken();
-
+ 
   if (token == null || userId == null) return null;
 
   final response = await http.get(
-    Uri.parse('https://aleznauerdtc1.azurewebsites.net/api/auth/login'),
+    Uri.parse('https://aleznauerdtc2.azurewebsites.net/api/auth/login'),
     headers: {'Authorization': 'Bearer $token'},
   );
-
-  print('Status: ${response.statusCode}');
-  print('Body: ${response.body}');
   
   if (response.statusCode == 200) {
     final List users = jsonDecode(response.body);
     final user = users.firstWhere(
       (u) => u['userId'] == userId,
-      orElse: () => null,
+      orElse: () => null,  
     );
-
+    
     if (user != null && user['roleWorker'] != null) {
       prefs.setString('role', user['roleWorker']);
       return user['roleWorker'];

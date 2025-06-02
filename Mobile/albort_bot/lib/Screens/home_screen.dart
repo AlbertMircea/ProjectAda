@@ -49,18 +49,7 @@ class HomeScreen extends StatelessWidget {
                     child: const Text('Track Order'),
                   ),
                 ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: 300,
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/requestMedicine');
-                    },
-                    style: buttonStyle,
-                    child: const Text('Request Medicine'),
-                  ),
-                ),
+                
                 const SizedBox(height: 16),
                 SizedBox(
                   width: 300,
