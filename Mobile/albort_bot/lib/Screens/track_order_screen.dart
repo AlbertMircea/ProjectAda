@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:albort_bot/Providers/patient_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../Models/medication_request.dart';
 import '../Services/track_order_service.dart';
 
@@ -8,6 +10,7 @@ class TrackOrderScreen extends StatefulWidget {
 
   @override
   State<TrackOrderScreen> createState() => _RequestScreenState();
+  
 }
 
 class _RequestScreenState extends State<TrackOrderScreen> {
@@ -15,19 +18,24 @@ class _RequestScreenState extends State<TrackOrderScreen> {
   List<MedicationRequest> _requests = [];
   bool _loading = true;
   String? _error;
-
   int? trackingRequestId;
-
   bool isLoadingStatusUpdate = false;
-
   
   @override
   void initState() {
     super.initState();
+    _loadData();
     _loadRequests();
   }
 
 
+  Future<void> _loadData() async {
+  try {
+    await Provider.of<PatientProvider>(context, listen: false).fetchPatients();
+  } catch (e) {
+    throw("Eroare la încărcare date: $e");
+  }
+}
   Future<void> _loadRequests() async {
     try {
       final allRequests = await _service.getAllRequestsSorted();
@@ -58,48 +66,53 @@ class _RequestScreenState extends State<TrackOrderScreen> {
     }
   }
 
-
   Widget _buildRequestCard(MedicationRequest req) {
-      return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: _getBackgroundColor(req.status),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Card(
-        elevation: 3,
-        margin: EdgeInsets.zero,
-        color: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (req.requestId != null)
-                Text("Request ID: ${req.requestId}", style: TextStyle(fontWeight: FontWeight.bold)),
+    final patientsComplete = Provider.of<PatientProvider>(context, listen: false).patientsComplete;
+    final patientComplete = patientsComplete.firstWhere((p) => p.patient.userId == req.patientId);
+
+
+    return Container(
+    margin: const EdgeInsets.symmetric(vertical: 8),
+    decoration: BoxDecoration(
+      color: _getBackgroundColor(req.status),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Card(
+      elevation: 3,
+      margin: EdgeInsets.zero,
+      color: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (req.requestId != null)
+              Text("Request ID: ${req.requestId}",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(height: 4),
-              Text("Patient ID: ${req.patientId}"),
-              Text("Medication ID: ${req.medicationId}"),
+              Text("Patient: ${patientComplete.patient.firstName} ${patientComplete.patient.lastName}"),
+              Text("Nurse: ${req.nurseId}"),
+              Text("Medication: ${req.medicationId}"),
               Text("Quantity: ${req.quantity}"),
-              Text("Status: ${req.status}", style: TextStyle(color: _getStatusColor(req.status))),
+              Text("Status: ${req.status}",
+                  style: TextStyle(color: _getStatusColor(req.status))),
               Text(
                 "Requested at: ${req.requestedAt != null ? req.requestedAt!.toLocal().toString() : 'N/A'}",
               ),
               if (req.status.toLowerCase() == 'transporting') ...[
-              SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () => _markAsDelivered(req.requestId!),
-                child: Text("Mark as Delivered"),
-              ),
+                SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () => _markAsDelivered(req.requestId!),
+                  child: Text("Mark as Delivered"),
+                ),
               ],
-            ],
-          ),
+          ],
         ),
       ),
-    );
-  }
-
+    ),
+  );
+}
 
   Color _getBackgroundColor(String status) {
     switch (status.toLowerCase()) {
