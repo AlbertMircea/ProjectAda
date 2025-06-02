@@ -32,7 +32,8 @@ This project is a full-stack web application designed to streamline and digitali
 
 ## Installation Instructions
 
-To run the application, you first need to install JFrog.
+To run the application, you first need to install Node.Js
+Don't forget to update the path to npm and nodejs in the env variables, if your sistem doesn't recognize the command npm.
 
 1. **Clone the repository**
    ```bash
@@ -51,7 +52,7 @@ Install dependencies:
    npm install
    ```
 Start the application:
-  ```
+  ```base
    npm start
   ```
 
@@ -70,6 +71,7 @@ https://aleznauer-ward-general2.azurewebsites.net
 
 ## Contact
 For acces to APIs or any questions, contact aaleznauer@gmail.com or open an issue in the repository.
+To acces the APIs your IPv4 needs to be added in the Azure Portal by us!
 
 
    
