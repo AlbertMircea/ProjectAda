@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:albort_bot/Models/simulation_state.dart';
 import 'package:albort_bot/Providers/patient_provider.dart';
 import 'package:albort_bot/Widgets/simulate_map_widget.dart';
 import 'package:flutter/material.dart';
@@ -21,14 +22,25 @@ class _RequestScreenState extends State<TrackOrderScreen> {
   String? _error;
   int? trackingRequestId;
   bool isLoadingStatusUpdate = false;
-  
-@override
+  Map<int, SimulationState> _simulationStates = {};
+  Timer? _pollingTimer;
+
+  @override
   void initState() {
     super.initState();
     _loadData();
     _loadRequests();
+
+    _pollingTimer = Timer.periodic(Duration(seconds: 3), (timer) {
+      _loadRequests();
+    });
   }
 
+  @override
+  void dispose() {
+    _pollingTimer?.cancel();
+    super.dispose();
+  }
 
   Future<void> _loadData() async {
   try {
@@ -57,6 +69,7 @@ class _RequestScreenState extends State<TrackOrderScreen> {
   Future<void> _markAsDelivered(int requestId) async {
     final success = await _service.updateRequestStatus(requestId, 'Delivered');
     if (success) {
+      _simulationStates.remove(requestId); // Clear state
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Marked as delivered")),
       );
@@ -68,12 +81,18 @@ class _RequestScreenState extends State<TrackOrderScreen> {
     }
   }
 
-  Widget _buildRequestCard(MedicationRequest req) {
-    final patientsComplete = Provider.of<PatientProvider>(context, listen: false).patientsComplete;
-    final patientComplete = patientsComplete.firstWhere((p) => p.patient.userId == req.patientId);
+ Widget _buildRequestCard(MedicationRequest req) {
+  final patientsComplete = Provider.of<PatientProvider>(context, listen: false).patientsComplete;
+  final patientComplete = patientsComplete.firstWhere((p) => p.patient.userId == req.patientId);
 
+  final existingState = _simulationStates[req.requestId!];
+  final simState = existingState ??
+    SimulationState(position: Offset.zero);
 
-    return Container(
+  _simulationStates[req.requestId!] = simState;
+
+  return Container(
+    key: PageStorageKey('request_${req.requestId}'),
     margin: const EdgeInsets.symmetric(vertical: 8),
     decoration: BoxDecoration(
       color: _getBackgroundColor(req.status),
@@ -90,32 +109,31 @@ class _RequestScreenState extends State<TrackOrderScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (req.requestId != null)
-              Text("Request ID: ${req.requestId}",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 4),
-              Text("Patient: ${patientComplete.patient.firstName} ${patientComplete.patient.lastName}"),
-              Text("Nurse: ${req.nurseId}"),
-              Text("Medication: ${req.medicationId}"),
-              Text("Quantity: ${req.quantity}"),
-              Text("Status: ${req.status}",
-                  style: TextStyle(color: _getStatusColor(req.status))),
-              Text(
-                "Requested at: ${req.requestedAt != null ? req.requestedAt!.toLocal().toString() : 'N/A'}",
+              Text("Request ID: ${req.requestId}", style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 4),
+            Text("Patient: ${patientComplete.patient.firstName} ${patientComplete.patient.lastName}"),
+            Text("Nurse: ${req.nurseId}"),
+            Text("Medication: ${req.medicationId}"),
+            Text("Quantity: ${req.quantity}"),
+            Text("Status: ${req.status}", style: TextStyle(color: _getStatusColor(req.status))),
+            Text("Requested at: ${req.requestedAt != null ? req.requestedAt!.toLocal().toString() : 'N/A'}"),
+            if (req.status.toLowerCase() == 'transporting') ...[
+              SizedBox(height: 12), 
+              MultiWardMapWidget(
+                ward: patientComplete.patient.ward,
+                room: patientComplete.patient.room,
+                simulationState: simState,
+                onDelivered: () => _markAsDelivered(req.requestId!),
               ),
-              if (req.status.toLowerCase() == 'transporting') ...[
-                SizedBox(height: 12),
-               MultiWardMapWidget(
-                  ward: patientComplete.patient.ward,
-                  room: patientComplete.patient.room,
-                  onDelivered: () => _markAsDelivered(req.requestId!),
-                ),
-              ],
+            ],
           ],
         ),
       ),
     ),
   );
 }
+
+
 
   Color _getBackgroundColor(String status) {
     switch (status.toLowerCase()) {
