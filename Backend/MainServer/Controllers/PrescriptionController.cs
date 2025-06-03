@@ -78,7 +78,12 @@ public class PrescriptionController : ControllerBase
         throw new Exception("Failed to Get Medications");
     }
 
-
+    [HttpGet("GetMedication/{medicationId}")]
+    public Prescription GetMedication(int medicationId)
+    {
+        string sql = @"SELECT * FROM TutorialAppSchema.Medication WHERE MedicationId = " + medicationId.ToString();
+        return _dapper.LoadDataSingle<Prescription>(sql);
+    }
 
     [HttpDelete("MedicationDelete/{medicationId}")]
     public IActionResult DeleteMedication(int medicationId)
