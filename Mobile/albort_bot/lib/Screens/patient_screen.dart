@@ -44,6 +44,7 @@ class PatientsScreenState extends State<PatientsScreen> {
 
   try {
     List<PatientComplete> patients = await fetchPatients();
+    if (!mounted) return;
     final patientProvider = Provider.of<PatientProvider>(context, listen: false);
     patientProvider.setPatientsComplete(patients);
 
@@ -53,6 +54,7 @@ class PatientsScreenState extends State<PatientsScreen> {
       _loading = false;
     });
   } catch (e) {
+    if (!mounted) return;
     setState(() {
       _error = "Failed to load patients";
       _loading = false;
@@ -70,15 +72,18 @@ class PatientsScreenState extends State<PatientsScreen> {
     }
   }
 
-  void _filterByUserId(String userId) {
-  setState(() {
-    if (userId.isEmpty) {
-      _filteredPatients = _patients; 
-    } else {
-      _filteredPatients = _patients.where((p) => p.patient.userId.toString() == userId).toList();
-    }
-  });
-}
+  void _filterByName(String name) {
+    setState(() {
+      if (name.isEmpty) {
+        _filteredPatients = _patients;
+      } else {
+        _filteredPatients = _patients.where((p) {
+          final fullName = '${p.patient.firstName} ${p.patient.lastName}'.toLowerCase();
+          return fullName.contains(name.toLowerCase());
+        }).toList();
+      }
+    });
+  } 
   
 
   @override
@@ -92,41 +97,27 @@ class PatientsScreenState extends State<PatientsScreen> {
             Row(
               children: [
                 Expanded(
-                  child: TextField(
+                  child:TextField(
                     controller: _userIdController,
+                    onChanged: (value) {
+                      _filterByName(value);
+                    },
                     decoration: InputDecoration(
-                      labelText: 'Enter User ID',
-                      border: OutlineInputBorder(),
+                      labelText: 'Patient Name',
+                      prefixIcon: Icon(Icons.search),
+                      suffixIcon: _userIdController.text.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(Icons.clear),
+                              onPressed: () {
+                                _userIdController.clear();
+                                _filterByName('');
+                              },
+                            )
+                          : null,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    keyboardType: TextInputType.number,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 8), 
-
-      
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      final userId = _userIdController.text.trim();
-                      if (userId.isNotEmpty) {
-                        _filterByUserId(userId);
-                      }
-                    },
-                    child: Text("Search"),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _userIdController.clear();
-                      _filterByUserId('');
-                    },
-                    child: Text("Reset List"),
                   ),
                 ),
               ],

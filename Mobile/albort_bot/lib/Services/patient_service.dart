@@ -116,14 +116,13 @@ Future<void> sendMedicationRequest(MedicationRequest request, String ward) async
   else if(ward=="General Medicine"){
     
     final response = await http.post(
-      Uri.parse('https://aleznauer-ward-general2.azurewebsites.net/WardSync/push-medication'),
+      Uri.parse('https://aleznauer-ward-general2.azurewebsites.net/WardSync/request-medication'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token', 
       },
       body: jsonEncode(request.toJson()),
     );
-   
     if (response.statusCode != 200) {
     throw Exception('Failed to send medication request: ${response.body}');
     }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:albort_bot/Providers/patient_provider.dart';
+import 'package:albort_bot/Widgets/simulate_map_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Models/medication_request.dart';
@@ -21,7 +22,7 @@ class _RequestScreenState extends State<TrackOrderScreen> {
   int? trackingRequestId;
   bool isLoadingStatusUpdate = false;
   
-  @override
+@override
   void initState() {
     super.initState();
     _loadData();
@@ -52,8 +53,9 @@ class _RequestScreenState extends State<TrackOrderScreen> {
   }
 
 
+
   Future<void> _markAsDelivered(int requestId) async {
-    final success = await _service.updateRequestStatus(requestId, 'delivered');
+    final success = await _service.updateRequestStatus(requestId, 'Delivered');
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Marked as delivered")),
@@ -102,9 +104,10 @@ class _RequestScreenState extends State<TrackOrderScreen> {
               ),
               if (req.status.toLowerCase() == 'transporting') ...[
                 SizedBox(height: 12),
-                ElevatedButton(
-                  onPressed: () => _markAsDelivered(req.requestId!),
-                  child: Text("Mark as Delivered"),
+               MultiWardMapWidget(
+                  ward: patientComplete.patient.ward,
+                  room: patientComplete.patient.room,
+                  onDelivered: () => _markAsDelivered(req.requestId!),
                 ),
               ],
           ],
@@ -142,9 +145,11 @@ class _RequestScreenState extends State<TrackOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final patientsComplete = Provider.of<PatientProvider>(context).patientsComplete;
+
     return Scaffold(
       appBar: AppBar(title: Text("Medication Requests")),
-      body: _loading
+      body: _loading || patientsComplete.isEmpty
           ? Center(child: CircularProgressIndicator())
           : _error != null
               ? Center(child: Text("Error: $_error", style: TextStyle(color: Colors.red)))
@@ -163,4 +168,3 @@ class _RequestScreenState extends State<TrackOrderScreen> {
     );
   }
 }
-

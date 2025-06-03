@@ -14,7 +14,7 @@ Future<int?> getUserIdFromToken() async {
       final decodedToken = JwtDecoder.decode(token);
       return int.tryParse(decodedToken['userId'].toString());
     } catch (e) {
-      print('Error decoding token: $e');
+      throw('Error decoding token: $e');
     }
   }
   return null;
