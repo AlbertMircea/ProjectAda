@@ -117,6 +117,8 @@ class _RequestScreenState extends State<TrackOrderScreen> {
             Text("Quantity: ${req.quantity}"),
             Text("Status: ${req.status}", style: TextStyle(color: _getStatusColor(req.status))),
             Text("Requested at: ${req.requestedAt != null ? req.requestedAt!.toLocal().toString() : 'N/A'}"),
+            Text('Ward: ${patientComplete.patient.ward}'),
+            Text('Room: ${patientComplete.patient.room}'),
             if (req.status.toLowerCase() == 'transporting') ...[
               SizedBox(height: 12), 
               MultiWardMapWidget(

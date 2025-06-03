@@ -291,7 +291,7 @@ class PatientsScreenState extends State<PatientsScreen> {
           ...prescriptions.map((prescription) => ListTile(
             leading: Icon(Icons.medication),
             title: Text(prescription.medication),
-            subtitle: Text('Dosage: ${prescription.dosage}, Quantity: ${prescription.quantity}'),
+            subtitle: Text('Dosage: ${prescription.dosage}, Quantity: ${prescription.quantity}, MedicationId: ${prescription.medicationId}'),
           )),
         ],
       ),
