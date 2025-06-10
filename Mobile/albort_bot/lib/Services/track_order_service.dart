@@ -41,21 +41,21 @@ class RequestPrescriptionService {
   }
 
   Future<Prescription> getMedicationById(int medicationId) async {
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('authToken'); 
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken'); 
 
-  if (token == null || token.isEmpty) {
-    throw Exception('Authentication token not found.');
+    if (token == null || token.isEmpty) {
+      throw Exception('Authentication token not found.');
+    }
+    final url = Uri.parse('$baseUrl/GetMedication/$medicationId');
+    final response = await http.get(url, headers: {'Authorization': 'Bearer $token'});
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return Prescription.fromJson(data);
+    } else {
+      throw Exception('Failed to load medication ${response.statusCode}');
+    }
   }
-  final url = Uri.parse('$baseUrl/GetMedication/$medicationId');
-  final response = await http.get(url, headers: {'Authorization': 'Bearer $token'});
-  if (response.statusCode == 200) {
-    final data = json.decode(response.body);
-    return Prescription.fromJson(data);
-  } else {
-    throw Exception('Failed to load medication ${response.statusCode}');
-  }
-}
   
   Future<bool> updateRequestStatus(int requestId, String newStatus) async {
     final url = Uri.parse('$baseUrl/UpdateStatus/$requestId');
