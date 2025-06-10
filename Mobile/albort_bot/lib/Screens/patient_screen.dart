@@ -1,8 +1,10 @@
 import 'package:albort_bot/Models/medication_request.dart';
 import 'package:albort_bot/Models/patient_complete.dart';
+import 'package:albort_bot/Providers/patient_provider.dart';
 import 'package:albort_bot/Services/auth_service.dart';
 import 'package:albort_bot/Services/patient_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PatientsScreen extends StatefulWidget {
   const PatientsScreen({super.key});
@@ -17,47 +19,58 @@ class PatientsScreenState extends State<PatientsScreen> {
   String? _loginFirstName;
   String? _loginLastName;
   int? _nurseId;
-  List<PatientComplete> _patients = [];
   List<PatientComplete> _filteredPatients = [];
   bool _loading = true;
   String? _error;
   final TextEditingController _userIdController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-      _initializeUserAndLoadPatients();
-  }
-
-
+  Map<int, String> _doctorNameCache = {};
+  
   @override
   void dispose() {
     _userIdController.dispose();
     super.dispose();
   }
-  
-  
-  void _loadPatients() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
 
+  @override
+  void initState() {
+    super.initState();
+    _initializeUserAndLoadPatients();
+
+    // Initialize filtered patients once after patients are fetched:
+    _userIdController.addListener(() {
+      _filterPatients(_userIdController.text);
+    });
+  }
+
+  Future<String?> _getDoctorName(int doctorId) async {
+    if (_doctorNameCache.containsKey(doctorId)) {
+      return _doctorNameCache[doctorId];
+    }
+
+    final name = await _authService.getDoctorNameById(doctorId);
+    if (name != null) {
+      _doctorNameCache[doctorId] = name;
+    }
+    return name ?? 'Unknown';
+  }
+
+
+  Future<void> _loadPatients() async {
     try {
-      List<PatientComplete> patients = await fetchPatients();
-      if (!mounted) return;
+      await Provider.of<PatientProvider>(context, listen: false).fetchPatients();
+      _filterPatients(_userIdController.text);
       setState(() {
-        _patients = _filteredPatients = patients;
         _loading = false;
       });
     } catch (e) {
-      if (!mounted) return;
       setState(() {
-        _error = "Failed to load patients";
+        _error = e.toString();
         _loading = false;
       });
     }
   }
+
+
 
   Future<void> _initializeUserAndLoadPatients() async {
     final userDetails = await _authService.fetchUserDetails();
@@ -71,78 +84,87 @@ class PatientsScreenState extends State<PatientsScreen> {
     _loadPatients();
   }
   
-  void _filterByName(String name) {
+  void _filterPatients(String filter) {
+    final patients = Provider.of<PatientProvider>(context, listen: false).patientsComplete;
+
     setState(() {
-      if (name.isEmpty) {
-        _filteredPatients = _patients;
+      if (filter.isEmpty) {
+        _filteredPatients = patients;
       } else {
-        _filteredPatients = _patients.where((p) {
+        _filteredPatients = patients.where((p) {
           final fullName = '${p.patient.firstName} ${p.patient.lastName}'.toLowerCase();
-          return fullName.contains(name.toLowerCase());
+          return fullName.contains(filter.toLowerCase());
         }).toList();
       }
     });
-  } 
+  }
+
   
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Patient Records")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
+    return Consumer<PatientProvider>(
+      builder: (context, patientProvider, child) {
+        // Update _filteredPatients if the provider's patients change and search text is empty or unchanged
+        if (_filteredPatients.isEmpty || _userIdController.text.isEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _filterPatients(_userIdController.text);
+          });
+        }
+
+        if (_loading) return Center(child: CircularProgressIndicator());
+        if (_error != null) return Center(child: Text('Error: $_error'));
+
+        return Scaffold(
+          appBar: AppBar(title: Text("Patient Records")),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
               children: [
-                Expanded(
-                  child:TextField(
-                    controller: _userIdController,
-                    onChanged: (value) {
-                      _filterByName(value);
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Patient Name',
-                      prefixIcon: Icon(Icons.search),
-                      suffixIcon: _userIdController.text.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(Icons.clear),
-                              onPressed: () {
-                                _userIdController.clear();
-                                _filterByName('');
-                              },
-                            )
-                          : null,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _userIdController,
+                        decoration: InputDecoration(
+                          labelText: 'Patient Name',
+                          prefixIcon: Icon(Icons.search),
+                          suffixIcon: _userIdController.text.isNotEmpty
+                              ? IconButton(
+                                  icon: Icon(Icons.clear),
+                                  onPressed: () {
+                                    _userIdController.clear();
+                                    _filterPatients('');
+                                  },
+                                )
+                              : null,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
+                ),
+                SizedBox(height: 16),
+                Expanded(
+                  child: _filteredPatients.isEmpty
+                      ? Center(child: Text("No patients found."))
+                      : ListView.builder(
+                          itemCount: _filteredPatients.length,
+                          itemBuilder: (context, index) {
+                            return _buildExpandablePatientCard(_filteredPatients[index]);
+                          },
+                        ),
                 ),
               ],
             ),
-            
-            SizedBox(height: 16),
-            SizedBox(height: 16),
-            Expanded(
-              child: _loading
-                  ? Center(child: CircularProgressIndicator())
-                  : _error != null
-                      ? Center(child: Text("Error: $_error", style: TextStyle(color: Colors.red)))
-                      : _filteredPatients.isEmpty
-                          ? Center(child: Text("No patients found."))
-                          : ListView.builder(
-                              itemCount: _filteredPatients.length,
-                              itemBuilder: (context, index) {
-                                return _buildExpandablePatientCard(_filteredPatients[index]);
-                              },
-                            ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
+
   
     void _showMedicationRequestDialog(PatientComplete patientComplete) {
     final TextEditingController medicationIdController = TextEditingController();
@@ -255,10 +277,16 @@ class PatientsScreenState extends State<PatientsScreen> {
             title: Text("Gender"),
             subtitle: Text(patient.gender),
           ),
-          ListTile(
-            leading: Icon(Icons.local_hospital),
-            title: Text("Doctor ID"),
-            subtitle: Text(patient.doctorID.toString()),
+          FutureBuilder<String?>(
+            future: _getDoctorName(patient.doctorID),
+            builder: (context, snapshot) {
+              final doctorName = snapshot.data ?? 'Loading...';
+              return ListTile(
+                leading: Icon(Icons.local_hospital),
+                title: Text("Doctor"),
+                subtitle: Text(doctorName),
+              );
+            },
           ),
           ListTile(
             leading: Icon(Icons.room),
@@ -289,7 +317,7 @@ class PatientsScreenState extends State<PatientsScreen> {
           ),
           ...prescriptions.map((prescription) => ListTile(
             leading: Icon(Icons.medication),
-            title: Text('${prescription.medication} (ID: ${prescription.medicationID})'),
+            title: Text('${prescription.medication} (ID: ${prescription.medicationId})'),
             subtitle: Text('Dosage: ${prescription.dosage}, Quantity: ${prescription.quantity}'),
            
           )),

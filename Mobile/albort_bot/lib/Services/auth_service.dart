@@ -72,6 +72,25 @@ class AuthService {
     return prefs.getString('authToken');
   }
 
+  Future<String?> getDoctorNameById(int doctorId) async {
+    final token = await getToken();
+    final url = Uri.parse('$baseUrl/Auth/GetUser/$doctorId');
+
+    final response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final firstName = data['firstName'];
+      final lastName = data['lastName'];
+      return '$firstName $lastName';
+    }
+
+    return null; 
+  }
+
   Future<int?> getUserIdFromToken() async {
     final token = await getToken();
     if (token == null) return null;
