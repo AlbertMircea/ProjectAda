@@ -29,6 +29,8 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
   Timer? _pollingTimer;
   String? _loginFirstName;
   String? _loginLastName;
+  final Map<int, Prescription> _medicationCache = {};
+
 
   
 @override
@@ -108,7 +110,15 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
       SimulationState(position: Offset.zero);
 
     _simulationStates[req.requestId!] = simState;
-
+    if (!_medicationCache.containsKey(req.medicationId)) {
+      _service.getMedicationById(req.medicationId).then((medication) {
+        if (mounted) {
+          setState(() {
+            _medicationCache[req.medicationId] = medication;
+          });
+        }
+      });
+    }
     return Container(
     key: PageStorageKey('request_${req.requestId}'),
     margin: const EdgeInsets.symmetric(vertical: 8),
@@ -132,18 +142,7 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
               SizedBox(height: 4),
               Text("Patient: ${patientComplete.patient.firstName} ${patientComplete.patient.lastName}"),
               Text("Nurse: ${_loginFirstName ?? ''} ${_loginLastName ?? ''}"),
-              FutureBuilder<Prescription>(
-                future: _service.getMedicationById(req.medicationId),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Text("Loading medication...");
-                  } else if (snapshot.hasError) {
-                    return Text("Error loading medication");
-                  } else {
-                    return Text("Medication: ${snapshot.data?.medication ?? 'Unknown'}");
-                  }
-                },
-              ),
+              Text("Medication: ${_medicationCache[req.medicationId]?.medication ?? 'Loading...'}",),
               Text("Quantity: ${req.quantity}"),
               Text("Status: ${req.status}",style: TextStyle(color: _getStatusColor(req.status))),
               Text("Requested at: ${req.requestedAt != null ? req.requestedAt!.toLocal().toString() : 'N/A'}",),
