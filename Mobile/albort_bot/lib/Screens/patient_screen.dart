@@ -1,9 +1,8 @@
 import 'package:albort_bot/Models/medication_request.dart';
 import 'package:albort_bot/Models/patient_complete.dart';
-import 'package:albort_bot/Providers/patient_provider.dart';
+import 'package:albort_bot/Services/auth_service.dart';
 import 'package:albort_bot/Services/patient_service.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class PatientsScreen extends StatefulWidget {
   const PatientsScreen({super.key});
@@ -13,17 +12,21 @@ class PatientsScreen extends StatefulWidget {
 }
 
 class PatientsScreenState extends State<PatientsScreen> {
+  final AuthService _authService = AuthService();
+
+  String? _loginFirstName;
+  String? _loginLastName;
+  int? _nurseId;
   List<PatientComplete> _patients = [];
   List<PatientComplete> _filteredPatients = [];
   bool _loading = true;
   String? _error;
   final TextEditingController _userIdController = TextEditingController();
-  int? _nurseId;
 
   @override
   void initState() {
     super.initState();
-    _loadPatients(); 
+      _initializeUserAndLoadPatients();
   }
 
 
@@ -35,34 +38,39 @@ class PatientsScreenState extends State<PatientsScreen> {
   
   
   void _loadPatients() async {
-  setState(() {
-    _loading = true;
-    _error = null;
-  });
-
-  try {
-    List<PatientComplete> patients = await fetchPatients();
-    if (!mounted) return;
-    final patientProvider = Provider.of<PatientProvider>(context, listen: false);
-    patientProvider.setPatientsComplete(patients);
-
     setState(() {
-      _patients = patients;
-      _filteredPatients = patients;
-      _loading = false;
+      _loading = true;
+      _error = null;
     });
-  } catch (e) {
-    if (!mounted) return;
-    setState(() {
-      _error = "Failed to load patients";
-      _loading = false;
-    });
+
+    try {
+      List<PatientComplete> patients = await fetchPatients();
+      if (!mounted) return;
+      setState(() {
+        _patients = _filteredPatients = patients;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = "Failed to load patients";
+        _loading = false;
+      });
+    }
   }
-}
 
-
+  Future<void> _initializeUserAndLoadPatients() async {
+    final userDetails = await _authService.fetchUserDetails();
+    if (userDetails != null) {
+      setState(() {
+        _nurseId = userDetails['userId'];
+        _loginFirstName = userDetails['firstName'];
+        _loginLastName = userDetails['lastName'];
+      });
+    }
+    _loadPatients();
+  }
   
-
   void _filterByName(String name) {
     setState(() {
       if (name.isEmpty) {
@@ -160,8 +168,8 @@ class PatientsScreenState extends State<PatientsScreen> {
                   keyboardType: TextInputType.number,
                 ),
                 SizedBox(height: 12),
-                Text("Patient ID: ${patientComplete.patient.userId}"),
-                Text("Nurse ID: $_nurseId"),
+                Text("Patient: ${patientComplete.patient.firstName} ${patientComplete.patient.lastName}"),
+                Text("Nurse: $_loginFirstName $_loginLastName"),
                 Text("Status: Pending"),
                 Text("Ward: ${patientComplete.patient.ward}"),
                 Text("Room: ${patientComplete.patient.room}")
@@ -281,7 +289,7 @@ class PatientsScreenState extends State<PatientsScreen> {
           ),
           ...prescriptions.map((prescription) => ListTile(
             leading: Icon(Icons.medication),
-            title: Text(prescription.medication),
+            title: Text('${prescription.medication} (ID: ${prescription.medicationID})'),
             subtitle: Text('Dosage: ${prescription.dosage}, Quantity: ${prescription.quantity}'),
           )),
         ],

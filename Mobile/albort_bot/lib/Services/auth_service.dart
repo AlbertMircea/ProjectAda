@@ -66,4 +66,37 @@ class AuthService {
     }
     return null;
   }
+
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('authToken');
+  }
+
+  Future<int?> getUserIdFromToken() async {
+    final token = await getToken();
+    if (token == null) return null;
+
+    final decodedToken = JwtDecoder.decode(token);
+    return int.tryParse(decodedToken['userId'].toString());
+  }
+
+  Future<Map<String, dynamic>?> fetchUserDetails() async {
+    final token = await getToken();
+    final userId = await getUserIdFromToken();
+
+    if (token == null || userId == null) return null;
+
+    final url = Uri.parse('$baseUrl/Auth/GetUser/$userId');
+
+    final response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      final userData = jsonDecode(response.body);
+      return userData;
+    }
+    return null;
+  }
 }
