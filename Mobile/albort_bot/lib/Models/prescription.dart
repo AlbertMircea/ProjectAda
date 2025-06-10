@@ -1,11 +1,11 @@
 class Prescription{
-  final int medicationID;
+  final int medicationId;
   final String medication;
   final String dosage;
   final int quantity;
 
   Prescription({
-    required this.medicationID,
+    required this.medicationId,
     required this.medication,
     required this.dosage,
     required this.quantity
@@ -13,7 +13,7 @@ class Prescription{
 
   factory Prescription.fromJson(Map<String, dynamic> json){
     return Prescription(
-      medicationID: (json['medicationId'] as int?) ?? 0,
+      medicationId: (json['medicationId'] as int?) ?? 0,
       medication: (json['medication'] as String?) ?? 'Unknown', 
       dosage: (json['dosage'] as String?) ?? 'Unknown', 
       quantity: (json['quantity'] as int?) ?? 0);

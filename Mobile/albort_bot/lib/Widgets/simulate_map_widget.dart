@@ -1,18 +1,22 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:albort_bot/Models/simulation_state.dart';
 import 'package:flutter/material.dart';
 
 class MultiWardMapWidget extends StatefulWidget {
   final String ward; // "Emergency" or "General Medicine"
   final String room; // "1", "2", "3"
   final VoidCallback onDelivered;
+  final SimulationState simulationState;
 
   const MultiWardMapWidget({
     super.key,
     required this.ward,
     required this.room,
+    required this.simulationState,
     required this.onDelivered,
   });
+
 
   @override
   State<MultiWardMapWidget> createState() => _MultiWardMapWidgetState();
@@ -26,10 +30,7 @@ class _MultiWardMapWidgetState extends State<MultiWardMapWidget> {
   final double corridorHeight = 40;
 
   late List<Offset> _pathPoints;
-  int _currentSegment = 0;
-  late Offset _position;
-  bool _reached = false;
-
+  
   int get roomIndex {
     final parsed = int.tryParse(widget.room);
     if (parsed == null || parsed < 1 || parsed > 3) return 0;
@@ -46,9 +47,16 @@ class _MultiWardMapWidgetState extends State<MultiWardMapWidget> {
   void initState() {
     super.initState();
     _buildPath();
-    _position = _pathPoints[0];
+
+    if (widget.simulationState.position == Offset.zero) {
+      widget.simulationState.position = _pathPoints[0];
+      widget.simulationState.currentSegment = 0;
+      widget.simulationState.reached = false;
+    }
+
     _timer = Timer.periodic(const Duration(milliseconds: 50), _moveAlongPath);
   }
+
 
   void _buildPath() {
     double verticalCorridorX = 0;
@@ -77,34 +85,38 @@ class _MultiWardMapWidgetState extends State<MultiWardMapWidget> {
   }
 
   void _moveAlongPath(Timer timer) {
-    const double speed = 2;
-    if (_currentSegment >= _pathPoints.length - 1) {
-      setState(() {
-        _reached = true;
-        _timer.cancel();
-      });
-      return;
+  if (widget.simulationState.currentSegment >= _pathPoints.length - 1) {
+   if (!widget.simulationState.reached) {
+    setState(() {
+      widget.simulationState.reached = true;
+    });
     }
-
-    Offset currentPos = _position;
-    Offset targetPos = _pathPoints[_currentSegment + 1];
-    double dx = targetPos.dx - currentPos.dx;
-    double dy = targetPos.dy - currentPos.dy;
-    double dist = sqrt(dx * dx + dy * dy);
-
-    if (dist < speed) {
-      setState(() {
-        _position = targetPos;
-        _currentSegment++;
-      });
-    } else {
-      double stepX = speed * dx / dist;
-      double stepY = speed * dy / dist;
-      setState(() {
-        _position = Offset(currentPos.dx + stepX, currentPos.dy + stepY);
-      });
-    }
+    _timer.cancel();
+    return;
   }
+
+  final currentPos = widget.simulationState.position;
+  final targetPos = _pathPoints[widget.simulationState.currentSegment + 1];
+  const speed = 2;
+
+  double dx = targetPos.dx - currentPos.dx;
+  double dy = targetPos.dy - currentPos.dy;
+  double dist = sqrt(dx * dx + dy * dy);
+
+  if (dist < speed) {
+    setState(() {
+      widget.simulationState.position = targetPos;
+      widget.simulationState.currentSegment++;
+    });
+  } else {
+    double stepX = speed * dx / dist;
+    double stepY = speed * dy / dist;
+    setState(() {
+      widget.simulationState.position = Offset(currentPos.dx + stepX, currentPos.dy + stepY);
+    });
+  }
+}
+
 
   @override
   void dispose() {
@@ -162,29 +174,33 @@ class _MultiWardMapWidgetState extends State<MultiWardMapWidget> {
 
               // Robot
               Positioned(
-                left: _position.dx,
-                top: _position.dy - 8,
-                child: Container(
-                  width: 16,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                    boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4)],
-                  ),
+              left: widget.simulationState.position.dx,
+              top: widget.simulationState.position.dy - 8,
+              child: Container(
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4)],
                 ),
               ),
+            ),
             ],
           ),
         ),
-        if (_reached)
+        if (widget.simulationState.reached)
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.check_circle, color: Colors.green, size: 32),
               Text("Delivery complete!", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
-              ElevatedButton.icon(onPressed: widget.onDelivered, icon: Icon(Icons.check), label: Text("Mark as Delivered")),
+              ElevatedButton.icon(
+                onPressed: widget.onDelivered,
+                icon: Icon(Icons.check),
+                label: Text("Mark as Delivered"),
+              ),
             ],
           ),
       ],

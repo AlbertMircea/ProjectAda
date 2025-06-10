@@ -291,6 +291,7 @@ class PatientsScreenState extends State<PatientsScreen> {
             leading: Icon(Icons.medication),
             title: Text('${prescription.medication} (ID: ${prescription.medicationID})'),
             subtitle: Text('Dosage: ${prescription.dosage}, Quantity: ${prescription.quantity}'),
+           
           )),
         ],
       ),
