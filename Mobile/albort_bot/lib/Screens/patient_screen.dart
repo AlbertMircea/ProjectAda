@@ -23,7 +23,7 @@ class PatientsScreenState extends State<PatientsScreen> {
   bool _loading = true;
   String? _error;
   final TextEditingController _userIdController = TextEditingController();
-  
+  Map<int, String> _doctorNameCache = {};
   
   @override
   void dispose() {
@@ -41,6 +41,19 @@ class PatientsScreenState extends State<PatientsScreen> {
       _filterPatients(_userIdController.text);
     });
   }
+
+  Future<String?> _getDoctorName(int doctorId) async {
+    if (_doctorNameCache.containsKey(doctorId)) {
+      return _doctorNameCache[doctorId];
+    }
+
+    final name = await _authService.getDoctorNameById(doctorId);
+    if (name != null) {
+      _doctorNameCache[doctorId] = name;
+    }
+    return name ?? 'Unknown';
+  }
+
 
   Future<void> _loadPatients() async {
     try {
@@ -264,10 +277,16 @@ class PatientsScreenState extends State<PatientsScreen> {
             title: Text("Gender"),
             subtitle: Text(patient.gender),
           ),
-          ListTile(
-            leading: Icon(Icons.local_hospital),
-            title: Text("Doctor ID"),
-            subtitle: Text(patient.doctorID.toString()),
+          FutureBuilder<String?>(
+            future: _getDoctorName(patient.doctorID),
+            builder: (context, snapshot) {
+              final doctorName = snapshot.data ?? 'Loading...';
+              return ListTile(
+                leading: Icon(Icons.local_hospital),
+                title: Text("Doctor"),
+                subtitle: Text(doctorName),
+              );
+            },
           ),
           ListTile(
             leading: Icon(Icons.room),
