@@ -1,7 +1,5 @@
-import 'dart:convert';
+import 'package:albort_bot/Services/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,62 +12,31 @@ class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  final AuthService authService = AuthService();
+
   bool isLoading = false;
   String? error;
-  bool success = false;
 
   Future<void> login() async {
     setState(() {
       isLoading = true;
       error = null;
-      success = false;
-    });
-
-    final url = Uri.parse('https://aleznauerdtc2.azurewebsites.net/Auth/Login');
-    final body = jsonEncode({
-      'email': emailController.text.trim(),
-      'password': passwordController.text.trim(),
     });
 
     try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: body,
+      final success = await authService.login(
+        emailController.text.trim(),
+        passwordController.text.trim(),
       );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final token = data['token'];
-
-        if (token != null && token is String) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('authToken', token);
-          await prefs.setString('username', emailController.text.trim());
-
-          setState(() {
-            success = true;
-            error = null;
-          });
-
-          Navigator.pushReplacementNamed(context, '/home');
-        } else {
-          setState(() {
-            error = 'Token not found in response.';
-            success = false;
-          });
-        }
-      } else {
-        setState(() {
-          error = 'Invalid email or password.';
-          success = false;
-        });
+      if (success) {
+        // Navigate to your home or main screen
+        Navigator.pushReplacementNamed(context, '/home');
       }
     } catch (e) {
       setState(() {
-    error = 'Error connecting to server: $e';
-    success = false;
-  });
+        error = e.toString().replaceAll('Exception: ', '');
+      });
     } finally {
       setState(() {
         isLoading = false;
@@ -81,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: true, 
+        automaticallyImplyLeading: true,
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -116,7 +83,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -144,11 +110,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         : const Text('Login'),
                   ),
                 ),
-                if (error!= null) ...[
+                if (error != null) ...[
                   const SizedBox(height: 12),
                   Text(
                     error!,
-                    style: TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.red),
                   ),
                 ],
               ],
@@ -157,6 +123,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-    
   }
-} 
+}

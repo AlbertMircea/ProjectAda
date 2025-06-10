@@ -1,7 +1,6 @@
 import 'package:albort_bot/Models/medication_request.dart';
 import 'package:albort_bot/Models/patient_complete.dart';
 import 'package:albort_bot/Providers/patient_provider.dart';
-import 'package:albort_bot/Services/auth_service.dart';
 import 'package:albort_bot/Services/patient_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +24,6 @@ class PatientsScreenState extends State<PatientsScreen> {
   void initState() {
     super.initState();
     _loadPatients(); 
-    _loadNurseId();
   }
 
 
@@ -63,14 +61,7 @@ class PatientsScreenState extends State<PatientsScreen> {
 }
 
 
-  void _loadNurseId() async {
-    final id = await getUserIdFromToken();
-    if (id != null) {
-      setState(() {
-        _nurseId = id;
-      });
-    }
-  }
+  
 
   void _filterByName(String name) {
     setState(() {
